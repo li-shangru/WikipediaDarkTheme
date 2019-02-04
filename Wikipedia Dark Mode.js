@@ -12,7 +12,8 @@
     'use strict';
     var allElements=document.getElementsByTagName("*");
     for(var i=0; i<allElements.length; i++) {
-        if (allElements[i] == document.getElementsByClassName("mw-wiki-logo")[0]){
+        // Check for images
+        if (allElements[i].nodeName.toLowerCase() === 'img'){
             continue;
         }
         // Check for URLs
