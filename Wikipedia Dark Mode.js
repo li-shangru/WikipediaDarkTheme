@@ -44,7 +44,7 @@
                 var backgroundColor = allElements[i].style.background.match(/rgba?\((\d{1,3}), ?(\d{1,3}), ?(\d{1,3})\)?(?:, ?(\d(?:\.\d?))\))?/);
                 // check for null
                 if (backgroundColor==null) {
-                    //allElements[i].style.background = "rgb(35, 35, 35)";
+                    allElements[i].style.background = "rgb(35, 35, 35)";
                 } else {
                     // Set new backgroundColor value
                     var r = parseInt(backgroundColor[1]) - 200;
