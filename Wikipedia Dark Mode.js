@@ -1,9 +1,10 @@
 // ==UserScript==
 // @name         Wikipedia Dark Mode
-// @namespace    http://tampermonkey.net/
+// @namespace    https://github.com/MaxsLi/WikiDarkMode/
 // @version      0.3
+// @icon         https://www.wikipedia.org/favicon.ico
 // @description  Pure Dark theme for wikipedia.org
-// @author       Shangru Li
+// @author       Shangru Li <https://github.com/MaxsLi>
 // @match        *://*.wikipedia.org/*
 // @grant        none
 // ==/UserScript==
