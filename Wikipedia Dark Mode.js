@@ -1,17 +1,24 @@
 // ==UserScript==
 // @name         Wikipedia Dark Mode
 // @namespace    https://github.com/MaxsLi/WikiDarkMode/
-// @version      0.3
+// @version      0.4
 // @icon         https://www.wikipedia.org/favicon.ico
 // @description  Pure Dark theme for wikipedia.org
-// @author       Shangru Li <https://github.com/MaxsLi>
+// @author       Shangru Li
 // @match        *://*.wikipedia.org/*
 // @grant        none
 // ==/UserScript==
 
 (function() {
     'use strict';
-    var allElements=document.getElementsByTagName("*");
+    // General idea is to put all elements on a wikipedia page to an array `allElements`
+    // traverse through this array and change the color of each element accordingly
+    // Hyper-link set to white: rgb(255, 255, 255)
+    // Normal text set to grey: rgb(155, 155, 155)
+    // Background set to black: rgb(35, 35, 35)
+    // images left untouched
+    // running time o(n), n is number of elements on a page
+    var allElements = document.getElementsByTagName("*");
     for(var i=0; i<allElements.length; i++) {
         // Check for images
         if (allElements[i].nodeName.toLowerCase() === 'img'){
