@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Wikipedia Dark Mode
 // @namespace    https://github.com/MaxsLi/WikiDarkMode/
-// @version      0.5
+// @version      0.6
 // @icon         https://www.wikipedia.org/favicon.ico
 // @description  Pure Dark theme for wikipedia.org
 // @author       Shangru Li
@@ -9,57 +9,89 @@
 // @grant        none
 // ==/UserScript==
 
-(function() {
+(function () {
     'use strict';
     // General idea is to put all elements on a wikipedia page to an array `allElements`
-    // traverse through this array and change the color of each element accordingly
-    // Hyperlink set to white:          rgb(255, 255, 255)
-    // Normal text set to grey:         rgb(155, 155, 155)
-    // Background color set to black:   rgb(35, 35, 35)
-    // Images background set to white:  rgb(255, 255, 255)
-    // running time o(n), where n is the number of elements on a page
-    var allElements = document.getElementsByTagName("*");
-    for(var i=0; i<allElements.length; i++) {
-        // Check for images
-        if (allElements[i].nodeName.toLowerCase() === 'img'){
+    // traverse through this array and reverse the color of each element accordingly
+    // running time o(n), where n is the number of elements on a page <- improve needed
+    var allElements = document.getElementsByTagName('*');
+
+    for (var i = 0; i < allElements.length; i++) {
+        var currentElement = allElements[i];
+        // check for images
+        if (currentElement.nodeName.toLowerCase() === 'img') {
             // Set images background color to white for better visibility
-            allElements[i].style.background = "rgb(255, 255, 255)";
-            // Leave forground color untouched
+            currentElement.style.background = "rgb(255, 255, 255)";
+            // skip to check next element
             continue;
         }
-        // Check for hyperlinks
-        if(new RegExp("([a-zA-Z0-9]+://)?([a-zA-Z0-9_]+:[a-zA-Z0-9_]+@)?([a-zA-Z0-9.-]+\\.[A-Za-z]{2,4})(:[0-9]+)?(/.*)?").test(allElements[i])) {
-            // Set all hyperlinks to white
-            allElements[i].style.color = "rgb(255, 255, 255)";
+        // get the foreground color of the `currentElement`, using `getComputedStyle` will return thea actual showing
+        // color of the given element.
+        var foregroundColor = window.getComputedStyle(currentElement, null).getPropertyValue("color");
+        var backgroundColor = window.getComputedStyle(currentElement, null).getPropertyValue("background-color");
+        var r, g, b;
+        var default_contrastValue = 8;
+        var default_foregroundColor = "rgb(238, 255, 255)";
+        var default_backgroundColor = "rgb(35, 35, 35)";
+        // split the `default_backgroundColor` string to array of RGB values.
+        var default_backgroundColor_array = default_backgroundColor.match(/rgb\((\d{1,3}), (\d{1,3}), (\d{1,3})\)/);
+
+        // check if the `foregroundColor` is of type RGB value.
+        if (foregroundColor.match(/rgb\((\d{1,3}), (\d{1,3}), (\d{1,3})\)/)) {
+            // split color to RGB values.
+            foregroundColor = foregroundColor.match(/rgb\((\d{1,3}), (\d{1,3}), (\d{1,3})\)/);
+            // inverse color
+            r = 255 - foregroundColor[1];
+            g = 255 - foregroundColor[2];
+            b = 255 - foregroundColor[3];
+            // checking contrast between foregroundColor of `currentElement` and the `default_backgroundColor`
+            // make sure the contrast is big enough to ensure a decent viewing experience.
+            while (contrast([r, g, b], [default_backgroundColor_array[1], default_backgroundColor_array[2], default_backgroundColor_array[3]]) < default_contrastValue) {
+                // increase each value by 30 each loop, i.e., increase the brightness of the current color
+                r = r + 30;
+                g = g + 30;
+                b = b + 30;
+            }
+            // set color
+            currentElement.style.color = 'rgb(' + r + ', ' + g + ', ' + b + ')';
         } else {
-            // Exception handler
-            try {
-                // Set regular text to grey
-                allElements[i].style.color = "rgb(155, 155, 155)";
-                // Store current background color to array /backgroundColor/
-                // Where backgroundColor[0] is the backgroundColor
-                // backgroundColor[1] is backgroundColor's red value
-                // backgroundColor[2] is backgroundColor's green value
-                // backgroundColor[3] is backgroundColor's blue value
-                var backgroundColor = allElements[i].style.background.match(/rgba?\((\d{1,3}), ?(\d{1,3}), ?(\d{1,3})\)?(?:, ?(\d(?:\.\d?))\))?/);
-                // check for null
-                if (backgroundColor==null) {
-                    allElements[i].style.background = "rgb(35, 35, 35)";
-                } else {
-                    // Set new backgroundColor value
-                    var r = parseInt(backgroundColor[1]) - 200;
-                    var g = parseInt(backgroundColor[2]) - 200;
-                    var b = parseInt(backgroundColor[3]) - 200;
-                    if (r <= 0 ) {
-                        r = 20;
-                    } else if (g <=0 ) {
-                        g = 20;
-                    } else if (b <=0 ) {
-                        b = 20;
-                    }
-                    allElements[i].style.background = 'rgb(' + r + ',' + g + ',' + b + ')';;
-                }
-            } catch(e) {};
+            // set default color
+            currentElement.style.color = default_foregroundColor;
         }
+
+        // check if the `backgroundColor` is of type RGB value.
+        if (backgroundColor.match(/rgb\((\d{1,3}), (\d{1,3}), (\d{1,3})\)/)) {
+            // split color to RGB values.
+            backgroundColor = backgroundColor.match(/rgb\((\d{1,3}), (\d{1,3}), (\d{1,3})\)/);
+            // inverse color
+            r = 255 - backgroundColor[1];
+            g = 255 - backgroundColor[2];
+            b = 255 - backgroundColor[3];
+            // for the background color one would not check for contrast, instead we increase the brightness of `backgroundColor`
+            // if it is too dark, providing a comforting reading experience.
+            if (r < default_backgroundColor_array[1] - 10 && g < default_backgroundColor_array[2] - 10 && g < default_backgroundColor_array[3] - 10) {
+                r = r + 30;
+                g = g + 30;
+                b = b + 30;
+            }
+            // set color
+            currentElement.style.backgroundColor = 'rgb(' + r + ', ' + g + ', ' + b + ')';
+        } else {
+            // set default color
+            currentElement.style.backgroundColor = default_backgroundColor;
+        }
+    }
+
+    // Helper function to calculate the contrast of two given color
+    function luminance(r, g, b) {
+        var a = [r, g, b].map(function (v) {
+            v /= 255;
+            return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+        });
+        return a[0] * 0.2126 + a[1] * 0.7152 + a[2] * 0.0722;
+    }
+
+    function contrast(rgb1, rgb2) {
+        return (luminance(rgb1[0], rgb1[1], rgb1[2]) + 0.05) / (luminance(rgb2[0], rgb2[1], rgb2[2]) + 0.05);
     }
 })();
