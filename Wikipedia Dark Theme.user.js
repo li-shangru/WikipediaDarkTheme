@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Wikipedia Dark Theme
 // @namespace    https://github.com/MaxsLi/WikiDarkMode
-// @version      0.61
+// @version      0.7
 // @icon         https://www.wikipedia.org/favicon.ico
 // @description  Pure Dark theme for wikipedia.org
 // @author       Shangru Li
@@ -15,18 +15,21 @@
     // traverse through this array and reverse the color of each element accordingly
     // running time o(n), where n is the number of elements on a page <- improve needed
     var allElements = document.getElementsByTagName('*');
-
     for (var i = 0; i < allElements.length; i++) {
         var currentElement = allElements[i];
-        // check for images
-        if (currentElement.nodeName.toLowerCase() === 'img') {
-            // Set images background color to white for better visibility
-            currentElement.style.background = "rgb(255, 255, 255)";
-            // skip to check next element
-            continue;
-        }
         // exception handler
         try {
+            // check for images
+            if (currentElement.nodeName.toLowerCase() === 'img') {
+                // Set images background color to white for better visibility
+                currentElement.style.background = "rgb(255, 255, 255)";
+                // skip to check next element
+                continue;
+            }
+            // check for legends and borders
+            else if (currentElement.className.toLowerCase().includes('legend') || currentElement.style.borderColor.match(/rgb\((\d{1,3}), (\d{1,3}), (\d{1,3})\)/)) {
+                continue;
+            }
             // get the foreground color of the `currentElement`, using `getComputedStyle` will return thea actual showing
             // color of the given element.
             var foregroundColor = window.getComputedStyle(currentElement, null).getPropertyValue("color");
@@ -78,7 +81,7 @@
                 }
                 // set color
                 currentElement.style.backgroundColor = 'rgb(' + r + ', ' + g + ', ' + b + ')';
-            } else {
+             } else{
                 // set default color
                 currentElement.style.backgroundColor = default_backgroundColor;
             }
