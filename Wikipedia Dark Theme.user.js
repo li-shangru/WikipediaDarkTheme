@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         Wikipedia Dark Mode
+// @name         Wikipedia Dark Theme
 // @namespace    https://github.com/MaxsLi/WikiDarkMode
 // @version      0.61
 // @icon         https://www.wikipedia.org/favicon.ico
