@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Wikipedia Dark Theme
 // @namespace    https://github.com/MaxsLi/WikiDarkMode
-// @version      0.71
+// @version      0.72
 // @icon         https://www.wikipedia.org/favicon.ico
 // @description  Pure Dark theme for wikipedia.org
 // @author       Shangru Li
@@ -28,6 +28,12 @@
             }
             // check for legends and pie charts
             else if (currentElement.className.toLowerCase().includes('legend') || currentElement.style.borderColor.toLowerCase().includes('transparent')) {
+                continue;
+            }
+            // check for math functions and expressions
+            else if (currentElement.className.toLowerCase().includes('mwe-math')) {
+                // invert the math expression images by setting a invert filter to 86% to match the background color
+                currentElement.style.filter = "invert(86%)";
                 continue;
             }
             // get the foreground color of the `currentElement`, using `getComputedStyle` will return thea actual showing
