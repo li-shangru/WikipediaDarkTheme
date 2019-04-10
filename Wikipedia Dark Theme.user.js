@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Wikipedia Dark Theme
 // @namespace    https://github.com/MaxsLi/WikipediaDarkTheme
-// @version      0.80
+// @version      0.81
 // @icon         https://www.wikipedia.org/favicon.ico
 // @description  Pure Dark theme for Wikipedia pages
 // @author       Shangru Li
@@ -33,13 +33,13 @@
         setPageVisibility("visible")
     }
     
-    // function to set the visbility of a html page
-    function setPageVisibility(visbility) {
+    // function to set the visibility of a html page
+    function setPageVisibility(visibility) {
         // get the entire html page
         var EntirePage = document.getElementsByTagName('html')[0];
         // set the page's background color to `default_backgroundColor`
         EntirePage.style.backgroundColor = default_backgroundColor;
-        EntirePage.style.visibility = visbility;
+        EntirePage.style.visibility = visibility;
     }
 
     // function to change the all the elements on a page to desired color
@@ -73,7 +73,7 @@
                 // get the foreground color of the `currentElement`, using `getComputedStyle` will return the actual showing
                 // color of the given element in `rgb` format. However, this method seems to need the document first be loaded
                 // after returning the computed style. Hence, to get around, we hide the entire page while waiting the document
-                // to load, then unhide after finished.
+                // to load, then un-hide after finished.
                 var foregroundColor = window.getComputedStyle(currentElement, null).getPropertyValue("color");
                 var backgroundColor = window.getComputedStyle(currentElement, null).getPropertyValue("background-color");
                 // temporary helper variables
@@ -119,6 +119,12 @@
                         g = g + 30;
                         b = b + 30;
                     }
+                    // if the background is too bright, we decrease the brightness of `backgroundColor`
+                    while (contrast([r, g, b], [default_backgroundColor_array[1], default_backgroundColor_array[2], default_backgroundColor_array[3]]) > default_contrastValue/7) {
+                        r = r - 30;
+                        g = g - 30;
+                        b = b - 30;
+                    }
                     // set color
                     currentElement.style.backgroundColor = 'rgb(' + r + ', ' + g + ', ' + b + ')';
                 } else{
@@ -127,12 +133,12 @@
                 }
             } catch (e){
                 // print any exception messages
-                console.log(e)
+                console.log(e);
             }
         }
     }
 
-    // function to calculate the luminace of given `r`, `g`, `b` value
+    // function to calculate the luminance of given `r`, `g`, `b` value
     function luminance(r, g, b) {
         var a = [r, g, b].map(function (v) {
             v /= 255;
