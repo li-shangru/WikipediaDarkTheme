@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Wikipedia Dark Theme
 // @namespace    https://github.com/MaxsLi/WikipediaDarkTheme
-// @version      0.81
+// @version      0.82
 // @icon         https://www.wikipedia.org/favicon.ico
 // @description  Pure Dark theme for Wikipedia pages
 // @author       Shangru Li
@@ -14,7 +14,7 @@
 // Document state will go from `loading` --> `interactive` --> `complete`
 // Metadata Block `@run-at document-start` will ensure the script start executing when `loading`
 (document.onreadystatechange = function () {
-    
+
     //##################---default_values---#####################################
     var default_contrastValue = 8;
     var default_foregroundColor = "rgb(238, 255, 255)";
@@ -32,7 +32,7 @@
         // after the document is finished we can set the whole page back to `visible`
         setPageVisibility("visible")
     }
-    
+
     // function to set the visibility of a html page
     function setPageVisibility(visibility) {
         // get the entire html page
@@ -54,14 +54,16 @@
             // exception handler
             try {
                 // check for images
-                if (currentElement.nodeName.toLowerCase() === 'img') {
+                if (currentElement.nodeName.toLowerCase() == 'img') {
                     // Set images background color to white for better visibility
                     currentElement.style.background = "rgb(255, 255, 255)";
                     // skip to check next element
                     continue;
                 }
                 // check for legends and pie charts
-                else if (currentElement.className.toLowerCase().includes('legend') || currentElement.style.borderColor.toLowerCase().includes('transparent')) {
+                else if (currentElement.className.toLowerCase().includes('legend') ||
+                        currentElement.style.borderColor.toLowerCase().includes('transparent') ||
+                        currentElement.className.toLowerCase().includes('border')) {
                     continue;
                 }
                 // check for math functions and expressions
@@ -91,7 +93,8 @@
                     b = 255 - foregroundColor[3];
                     // checking contrast between foregroundColor of `currentElement` and the `default_backgroundColor`
                     // make sure the contrast is high enough to ensure a decent viewing experience.
-                    while (contrast([r, g, b], [default_backgroundColor_array[1], default_backgroundColor_array[2], default_backgroundColor_array[3]]) < default_contrastValue) {
+                    while (contrast([r, g, b], [default_backgroundColor_array[1], default_backgroundColor_array[2], default_backgroundColor_array[3]])
+                            < default_contrastValue) {
                         // increase each value by 30 each loop, i.e., increase the brightness of the current color
                         r = r + 30;
                         g = g + 30;
@@ -120,7 +123,8 @@
                         b = b + 30;
                     }
                     // if the background is too bright, we decrease the brightness of `backgroundColor`
-                    while (contrast([r, g, b], [default_backgroundColor_array[1], default_backgroundColor_array[2], default_backgroundColor_array[3]]) > default_contrastValue/7) {
+                    while (contrast([r, g, b], [default_backgroundColor_array[1], default_backgroundColor_array[2], default_backgroundColor_array[3]])
+                            > default_contrastValue) {
                         r = r - 30;
                         g = g - 30;
                         b = b - 30;
@@ -138,7 +142,7 @@
         }
     }
 
-    // function to calculate the luminance of given `r`, `g`, `b` value
+    // helper function to calculate the luminance of given `r`, `g`, `b` value
     function luminance(r, g, b) {
         var a = [r, g, b].map(function (v) {
             v /= 255;
@@ -147,7 +151,7 @@
         return a[0] * 0.2126 + a[1] * 0.7152 + a[2] * 0.0722;
     }
 
-    // function to calculate the contrast of two given color `rgb1` and `rgb2`
+    // helper function to calculate the contrast of two given color `rgb1` and `rgb2`
     function contrast(rgb1, rgb2) {
         return (luminance(rgb1[0], rgb1[1], rgb1[2]) + 0.05) / (luminance(rgb2[0], rgb2[1], rgb2[2]) + 0.05);
     }
