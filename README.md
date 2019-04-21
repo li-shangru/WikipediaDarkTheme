@@ -20,9 +20,7 @@ To install:
 
 ## Screenshots
 
-Before  
-![A wikipedia page](/screenshots/sample.png)
-***
-After
-![A wikipedia page](/screenshots/version_0.81.png)
+**Before** | **After**
+--- | --- | ---
+![A wikipedia page](/screenshots/sample.png)|![A wikipedia page](/screenshots/version_0.81.png)
 
