@@ -21,6 +21,6 @@ To install:
 ## Screenshots
 
 **Before** | **After**
---- | --- | ---
-![A wikipedia page](/screenshots/sample.png)|![A wikipedia page](/screenshots/version_0.81.png)
+--- | ---
+![A wikipedia page](/screenshots/sample.png) | ![A wikipedia page](/screenshots/version_0.81.png)
 
