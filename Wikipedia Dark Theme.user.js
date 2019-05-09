@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Wikipedia Dark Theme
 // @namespace    https://github.com/MaxsLi/WikipediaDarkTheme
-// @version      0.82
+// @version      0.83
 // @icon         https://www.wikipedia.org/favicon.ico
 // @description  Pure Dark theme for Wikipedia pages
 // @author       Shangru Li
@@ -33,15 +33,6 @@
         setPageVisibility("visible")
     }
 
-    // function to set the visibility of a html page
-    function setPageVisibility(visibility) {
-        // get the entire html page
-        var EntirePage = document.getElementsByTagName('html')[0];
-        // set the page's background color to `default_backgroundColor`
-        EntirePage.style.backgroundColor = default_backgroundColor;
-        EntirePage.style.visibility = visibility;
-    }
-
     // function to change the all the elements on a page to desired color
     function setPage() {
         'use strict';
@@ -53,23 +44,35 @@
             var currentElement = allElements[i];
             // exception handler
             try {
-                // check for images
-                if (currentElement.nodeName.toLowerCase() == 'img') {
-                    // Set images background color to white for better visibility
-                    currentElement.style.background = "rgb(255, 255, 255)";
-                    // skip to check next element
-                    continue;
-                }
                 // check for legends and pie charts
-                else if (currentElement.className.toLowerCase().includes('legend') ||
+                if (currentElement.className.toLowerCase().includes('legend') ||
                         currentElement.style.borderColor.toLowerCase().includes('transparent') ||
                         currentElement.className.toLowerCase().includes('border')) {
+                    continue;
+                }
+                // check for wiki logo
+                else if (currentElement.className.toLowerCase().includes("mw-wiki-logo")) {
+                    invertImage(currentElement, 90);
                     continue;
                 }
                 // check for math functions and expressions
                 else if (currentElement.className.toLowerCase().includes('mwe-math')) {
                     // invert the math expression images by setting a invert filter to 86% to match the background color
-                    currentElement.style.filter = "invert(86%)";
+                    invertImage(currentElement, 86);
+                    continue;
+                }
+                // check for keyboard-key
+                else if (currentElement.className.toLowerCase().includes('keyboard-key')) {
+                    currentElement.style.background = default_backgroundColor;
+                    continue;
+                }
+                else if (currentElement.nodeName.toLowerCase() == 'img') {
+                    // check for signatures
+                    if (currentElement.src.toLowerCase().includes('signature')) {
+                        invertImage(currentElement, 100);
+                    } else if (!check_exclude(currentElement)) {
+                        currentElement.style.backgroundColor = "rgb(255, 255, 255)";
+                    }
                     continue;
                 }
                 // get the foreground color of the `currentElement`, using `getComputedStyle` will return the actual showing
@@ -142,6 +145,15 @@
         }
     }
 
+    // helper function to set the visibility of a html page
+    function setPageVisibility(visibility) {
+        // get the entire html page
+        var EntirePage = document.getElementsByTagName('html')[0];
+        // set the page's background color to `default_backgroundColor`
+        EntirePage.style.backgroundColor = default_backgroundColor;
+        EntirePage.style.visibility = visibility;
+    }
+
     // helper function to calculate the luminance of given `r`, `g`, `b` value
     function luminance(r, g, b) {
         var a = [r, g, b].map(function (v) {
@@ -154,5 +166,34 @@
     // helper function to calculate the contrast of two given color `rgb1` and `rgb2`
     function contrast(rgb1, rgb2) {
         return (luminance(rgb1[0], rgb1[1], rgb1[2]) + 0.05) / (luminance(rgb2[0], rgb2[1], rgb2[2]) + 0.05);
+    }
+
+    // helper function to check given source link has contain any substring specified in the list
+    function check_exclude(element) {
+        // list of tags of the wikipedia logos and symbols to be excluded
+        // list are subject to amend
+        var exclude_src_tag = [
+            "protection-shackle", "Green_check", "Symbol_support_vote",
+            "Edit-clear", "Information_icon", "Increase2", "Decrease_Positive",
+            "Steady2", "Decrease2", "Increase_Negative", "red_question_mark",
+            "Blue_check", "X_mark", "Yes_check", "Twemoji", "Walnut", "Cscr-featured",
+            "sound-openclipart", "Folder_Hexagonal_Icon", "Symbol_book_class2",
+            "Question_book-new", "Wiktionary-logo", "Commons-logo", "Wikinews-logo",
+            "Wikiquote-logo", "Wikivoyage-Logo", "Sound-icon", "Wikibooks-logo",
+            "Wikiversity-logo", "Ambox_contradict", "Ambox_question", "System-search",
+            "Split-arrows", "Wikiversity_logo", "Wikisource-logo", "Wikimedia_Community_Logo",
+            "Wikidata-logo", "Mediawiki-logo", "Wikispecies-logo"
+        ];
+        // loop over the list
+        for (var i = 0; i < exclude_src_tag.length; i++) {
+            if (element.src.includes(exclude_src_tag[i])) {
+                return true;
+            }
+        }
+    }
+
+    // helper function to invert a image to desired percentage
+    function invertImage(img, percent) {
+        img.style.filter = "invert(" + percent + "%)";
     }
 })();
