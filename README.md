@@ -2,9 +2,10 @@
 
 ## Introduction
 
-Wikipedia Dark Theme is a script to give wikipedia pages a black color theme.  
-I use wikipedia a lot, the white background really bugs me much. Especially after staring at a dark IDE for some time.  
-Hence I made a Javascript to solve it.  
+Wikipedia Dark Theme is a script to give wikipedia pages a dark color theme.  
+The script reverts the text color and set the page background to black.  
+Provide a premium reading experience during both day and night.  
+Easy on the eyes, pleasant in the heart.  
 _Note: using this script will affect page loading speed._
 
 ## Installation
@@ -22,5 +23,6 @@ To install:
 
 **Before** | **After**
 --- | ---
-![A wikipedia page](/screenshots/sample.png) | ![A wikipedia page](/screenshots/version_0.83.png)
+![A wikipedia page](/screenshots/sample.png) | ![A wikipedia page](/screenshots/version_0.84.png)
 
+ 
