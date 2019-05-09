@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Wikipedia Dark Theme
 // @namespace    https://github.com/MaxsLi/WikipediaDarkTheme
-// @version      0.83
+// @version      0.84
 // @icon         https://www.wikipedia.org/favicon.ico
 // @description  Pure Dark theme for Wikipedia pages
 // @author       Shangru Li
@@ -44,10 +44,14 @@
             var currentElement = allElements[i];
             // exception handler
             try {
-                // check for legends and pie charts
-                if (currentElement.className.toLowerCase().includes('legend') ||
-                        currentElement.style.borderColor.toLowerCase().includes('transparent') ||
-                        currentElement.className.toLowerCase().includes('border')) {
+                // check for images
+                if (currentElement.nodeName.toLowerCase() == 'img') {
+                    // check for signatures
+                    if (currentElement.src.toLowerCase().includes('signature')) {
+                        invertImage(currentElement, 100);
+                    } else if (!check_exclude(currentElement)) {
+                        currentElement.style.backgroundColor = "rgb(255, 255, 255)";
+                    }
                     continue;
                 }
                 // check for wiki logo
@@ -63,16 +67,13 @@
                 }
                 // check for keyboard-key
                 else if (currentElement.className.toLowerCase().includes('keyboard-key')) {
-                    currentElement.style.background = default_backgroundColor;
+                    currentElement.style.foregroundColor = default_backgroundColor;
                     continue;
                 }
-                else if (currentElement.nodeName.toLowerCase() == 'img') {
-                    // check for signatures
-                    if (currentElement.src.toLowerCase().includes('signature')) {
-                        invertImage(currentElement, 100);
-                    } else if (!check_exclude(currentElement)) {
-                        currentElement.style.backgroundColor = "rgb(255, 255, 255)";
-                    }
+                // check for legends and pie charts
+                else if (currentElement.className.toLowerCase().includes('legend') ||
+                    currentElement.className.toLowerCase().includes('border') ||
+                    currentElement.style.borderColor.toLowerCase().includes('transparent')) {
                     continue;
                 }
                 // get the foreground color of the `currentElement`, using `getComputedStyle` will return the actual showing
@@ -96,8 +97,8 @@
                     b = 255 - foregroundColor[3];
                     // checking contrast between foregroundColor of `currentElement` and the `default_backgroundColor`
                     // make sure the contrast is high enough to ensure a decent viewing experience.
-                    while (contrast([r, g, b], [default_backgroundColor_array[1], default_backgroundColor_array[2], default_backgroundColor_array[3]])
-                            < default_contrastValue) {
+                    while (contrast([r, g, b], [default_backgroundColor_array[1], default_backgroundColor_array[2], default_backgroundColor_array[3]]) <
+                        default_contrastValue) {
                         // increase each value by 30 each loop, i.e., increase the brightness of the current color
                         r = r + 30;
                         g = g + 30;
@@ -126,19 +127,19 @@
                         b = b + 30;
                     }
                     // if the background is too bright, we decrease the brightness of `backgroundColor`
-                    while (contrast([r, g, b], [default_backgroundColor_array[1], default_backgroundColor_array[2], default_backgroundColor_array[3]])
-                            > default_contrastValue) {
+                    while (contrast([r, g, b], [default_backgroundColor_array[1], default_backgroundColor_array[2], default_backgroundColor_array[3]]) >
+                        default_contrastValue) {
                         r = r - 30;
                         g = g - 30;
                         b = b - 30;
                     }
                     // set color
                     currentElement.style.backgroundColor = 'rgb(' + r + ', ' + g + ', ' + b + ')';
-                } else{
+                } else {
                     // set default color
                     currentElement.style.backgroundColor = default_backgroundColor;
                 }
-            } catch (e){
+            } catch (e) {
                 // print any exception messages
                 console.log(e);
             }
@@ -182,7 +183,8 @@
             "Wikiquote-logo", "Wikivoyage-Logo", "Sound-icon", "Wikibooks-logo",
             "Wikiversity-logo", "Ambox_contradict", "Ambox_question", "System-search",
             "Split-arrows", "Wikiversity_logo", "Wikisource-logo", "Wikimedia_Community_Logo",
-            "Wikidata-logo", "Mediawiki-logo", "Wikispecies-logo"
+            "Wikidata-logo", "Mediawiki-logo", "Wikispecies-logo", "Blue_pencil", "Nuvola_apps",
+            "White_flag_icon", "Ambox_important"
         ];
         // loop over the list
         for (var i = 0; i < exclude_src_tag.length; i++) {
