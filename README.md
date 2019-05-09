@@ -22,5 +22,5 @@ To install:
 
 **Before** | **After**
 --- | ---
-![A wikipedia page](/screenshots/sample.png) | ![A wikipedia page](/screenshots/version_0.81.png)
+![A wikipedia page](/screenshots/sample.png) | ![A wikipedia page](/screenshots/version_0.83.png)
 
