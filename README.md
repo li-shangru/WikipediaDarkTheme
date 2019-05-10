@@ -9,11 +9,11 @@ Easy on the eyes, pleasant in the heart.
 
 _Note: using this script will affect page loading speed._  
 
-**Script is also available on : [Greasy Fork](https://greasyfork.org/en/scripts/382833-wikipedia-dark-theme)**  
+**Also available on : [Greasy Fork](https://greasyfork.org/en/scripts/382833-wikipedia-dark-theme)**  
 
 ## Installation
 
-The script requires **Tampermonkey** - an extension available on most web browsers.  
+Requires **[Tampermonkey](https://www.tampermonkey.net/)** or other user script manager.  
 To install:
 
 * Click the `Wikipedia Dark Theme.user.js` file.
