@@ -1,13 +1,15 @@
 // ==UserScript==
 // @name         Wikipedia Dark Theme
 // @namespace    https://github.com/MaxsLi/WikipediaDarkTheme
-// @version      0.84
+// @version      0.85
 // @icon         https://www.wikipedia.org/favicon.ico
 // @description  Pure Dark theme for Wikipedia pages
 // @author       Shangru Li
 // @match        *://*.wikipedia.org/*
 // @grant        none
 // @run-at       document-start
+// @name:zh-CN          维基百科纯黑主题
+// @description:zh-cn   给予维基百科网页一个黑色主题
 // ==/UserScript==
 
 // The main function is called at every `onreadystatechange`
@@ -21,6 +23,8 @@
     var default_backgroundColor = "rgb(35, 35, 35)";
     //##################---one_could_alter_if_desired---#########################
 
+    //##################---controller---#########################################
+
     // Check each document state and take action accordingly
     if ('loading' == document.readyState) {
         // if document is loading we first hide the whole page
@@ -33,6 +37,8 @@
         setPageVisibility("visible")
     }
 
+    //##################---main function---######################################
+
     // function to change the all the elements on a page to desired color
     function setPage() {
         'use strict';
@@ -40,6 +46,7 @@
         // traverse through this array and reverse the color of each element accordingly
         // running time o(n), where n is the number of elements on a page
         var allElements = document.getElementsByTagName('*');
+        // loop over all elements on the page
         for (var i = 0; i < allElements.length; i++) {
             var currentElement = allElements[i];
             // exception handler
@@ -146,6 +153,8 @@
         }
     }
 
+    //##################---helper functions---###################################
+
     // helper function to set the visibility of a html page
     function setPageVisibility(visibility) {
         // get the entire html page
@@ -171,8 +180,8 @@
 
     // helper function to check given source link has contain any substring specified in the list
     function check_exclude(element) {
-        // list of tags of the wikipedia logos and symbols to be excluded
-        // list are subject to amend
+        // list of tags of the wikipedia logos and symbols to be excluded from setting backgroundColor to white
+        // list is subject to amend
         var exclude_src_tag = [
             "protection-shackle", "Green_check", "Symbol_support_vote",
             "Edit-clear", "Information_icon", "Increase2", "Decrease_Positive",
@@ -181,12 +190,12 @@
             "sound-openclipart", "Folder_Hexagonal_Icon", "Symbol_book_class2",
             "Question_book-new", "Wiktionary-logo", "Commons-logo", "Wikinews-logo",
             "Wikiquote-logo", "Wikivoyage-Logo", "Sound-icon", "Wikibooks-logo",
-            "Wikiversity-logo", "Ambox_contradict", "Ambox_question", "System-search",
-            "Split-arrows", "Wikiversity_logo", "Wikisource-logo", "Wikimedia_Community_Logo",
-            "Wikidata-logo", "Mediawiki-logo", "Wikispecies-logo", "Blue_pencil", "Nuvola_apps",
-            "White_flag_icon", "Ambox_important"
+            "Wikiversity-logo", "Ambox", "System-search", "Split-arrows", "Wikiversity_logo",
+            "Wikisource-logo", "Wikimedia_Community_Logo", "Wikidata-logo", "Mediawiki-logo",
+            "Wikispecies-logo", "Blue_pencil", "Nuvola_apps", "White_flag_icon",
+            "Wiki_letter_w_cropped", "Edit-copy_purple-wikiq"
         ];
-        // loop over the list
+        // loop over the list check if element is in the list
         for (var i = 0; i < exclude_src_tag.length; i++) {
             if (element.src.includes(exclude_src_tag[i])) {
                 return true;
@@ -196,6 +205,7 @@
 
     // helper function to invert a image to desired percentage
     function invertImage(img, percent) {
+        // invert images by adding a filter tag
         img.style.filter = "invert(" + percent + "%)";
     }
 })();
