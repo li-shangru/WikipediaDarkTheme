@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Wikipedia Dark Theme
 // @namespace    https://github.com/MaxsLi/WikipediaDarkTheme
-// @version      0.85
+// @version      0.86
 // @icon         https://www.wikipedia.org/favicon.ico
 // @description  Pure Dark theme for Wikipedia pages
 // @author       Shangru Li
@@ -45,7 +45,10 @@
         // General idea is to put all elements on a wikipedia page to an array `allElements`
         // traverse through this array and reverse the color of each element accordingly
         // running time o(n), where n is the number of elements on a page
-        var allElements = document.getElementsByTagName('*');
+
+        // get all elements in the document, use to be `getElementsByTagName('*')`
+        // However `querySelectorAll()` seems to be faster
+        var allElements = document.querySelectorAll('*');
         // loop over all elements on the page
         for (var i = 0; i < allElements.length; i++) {
             var currentElement = allElements[i];
@@ -53,23 +56,13 @@
             try {
                 // check for images
                 if (currentElement.nodeName.toLowerCase() == 'img') {
-                    // check for signatures
-                    if (currentElement.src.toLowerCase().includes('signature')) {
-                        invertImage(currentElement, 100);
-                    } else if (!check_exclude(currentElement)) {
-                        currentElement.style.backgroundColor = "rgb(255, 255, 255)";
-                    }
+                    // check current image
+                    checkImage(currentElement);
                     continue;
                 }
                 // check for wiki logo
                 else if (currentElement.className.toLowerCase().includes("mw-wiki-logo")) {
                     invertImage(currentElement, 90);
-                    continue;
-                }
-                // check for math functions and expressions
-                else if (currentElement.className.toLowerCase().includes('mwe-math')) {
-                    // invert the math expression images by setting a invert filter to 86% to match the background color
-                    invertImage(currentElement, 86);
                     continue;
                 }
                 // check for keyboard-key
@@ -179,26 +172,47 @@
     }
 
     // helper function to check given source link has contain any substring specified in the list
-    function check_exclude(element) {
+    function checkImage(element) {
         // list of tags of the wikipedia logos and symbols to be excluded from setting backgroundColor to white
         // list is subject to amend
         var exclude_src_tag = [
-            "protection-shackle", "Green_check", "Symbol_support_vote",
-            "Edit-clear", "Information_icon", "Increase2", "Decrease_Positive",
-            "Steady2", "Decrease2", "Increase_Negative", "red_question_mark",
-            "Blue_check", "X_mark", "Yes_check", "Twemoji", "Walnut", "Cscr-featured",
-            "sound-openclipart", "Folder_Hexagonal_Icon", "Symbol_book_class2",
-            "Question_book-new", "Wiktionary-logo", "Commons-logo", "Wikinews-logo",
-            "Wikiquote-logo", "Wikivoyage-Logo", "Sound-icon", "Wikibooks-logo",
-            "Wikiversity-logo", "Ambox", "System-search", "Split-arrows", "Wikiversity_logo",
-            "Wikisource-logo", "Wikimedia_Community_Logo", "Wikidata-logo", "Mediawiki-logo",
-            "Wikispecies-logo", "Blue_pencil", "Nuvola_apps", "White_flag_icon",
-            "Wiki_letter_w_cropped", "Edit-copy_purple-wikiq"
+            "protection-shackle", "green_check", "symbol_support_vote",
+            "edit-clear", "information_icon", "increase2", "decrease_positive",
+            "steady2", "decrease2", "increase_negative", "red_question_mark",
+            "blue_check", "x_mark", "yes_check", "twemoji", "walnut", "cscr-featured",
+            "sound-openclipart", "folder_hexagonal_icon", "symbol_book_class2",
+            "question_book-new", "wiktionary-logo", "commons-logo", "wikinews-logo",
+            "wikiquote-logo", "wikivoyage-logo", "sound-icon", "wikibooks-logo",
+            "wikiversity-logo", "ambox", "system-search", "split-arrows", "wikiversity_logo",
+            "wikisource-logo", "wikimedia_community_logo", "wikidata-logo", "mediawiki-logo",
+            "wikispecies-logo", "blue_pencil", "nuvola_apps", "white_flag_icon",
+            "wiki_letter_w_cropped", "edit-copy_purple-wikiq", "acap", "portal-puzzle",
+            "star_of_life", "disambig-dark", "gnome", "office-book"
         ];
-        // loop over the list check if element is in the list
+        // list of tags of images to have color inverted
+        var invert_src_tag = [
+            "loudspeaker", "signature", "signatur", "chinese_characters", "/media/math/render/"
+        ];
+        // loop over the `exclude_src_tag` list to set background color
         for (var i = 0; i < exclude_src_tag.length; i++) {
-            if (element.src.includes(exclude_src_tag[i])) {
-                return true;
+            if (element.src.toLowerCase().includes(exclude_src_tag[i])) {
+                // element is in the list, stop looping
+                break;
+            }
+        }
+        // i equals list's length implies the element is not in the list
+        if (i == exclude_src_tag.length) {
+            // if element is not in the list, set the background color to white
+            element.style.backgroundColor = "rgb(255, 255, 255)";
+        }
+
+        // loop over the `invert_src_tag` list to invert image color
+        for (var j = 0; j < invert_src_tag.length; j++) {
+            if (element.src.toLowerCase().includes(invert_src_tag[j])) {
+                // invert image if element is in the list
+                // invert 86 per cent in order to match the background color
+                invertImage(element, 86);
+                break;
             }
         }
     }
