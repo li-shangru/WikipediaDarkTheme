@@ -1,13 +1,14 @@
 // ==UserScript==
 // @name         Wikipedia Dark Theme
 // @namespace    https://github.com/MaxsLi/WikipediaDarkTheme
-// @version      0.87
+// @version      0.88
 // @icon         https://www.wikipedia.org/favicon.ico
 // @description  Script gives wikipedia pages a dark color theme
 // @author       Shangru Li
 // @match        *://*.wikipedia.org/*
 // @grant        none
 // @run-at       document-start
+// @license      MIT
 // @name:zh-CN          维基百科黑色主题
 // @description:zh-cn   给予维基百科网页一个黑色主题
 // ==/UserScript==
@@ -185,17 +186,20 @@
             "wikiquote-logo", "wikivoyage-logo", "sound-icon", "wikibooks-logo",
             "wikiversity-logo", "ambox", "system-search", "split-arrows", "wikiversity_logo",
             "wikisource-logo", "wikimedia_community_logo", "wikidata-logo", "mediawiki-logo",
-            "wikispecies-logo", "blue_pencil", "nuvola_apps", "white_flag_icon",
+            "wikispecies-logo", "nuvola_apps", "white_flag_icon",
             "wiki_letter_w_cropped", "edit-copy_purple-wikiq", "acap", "portal-puzzle",
             "star_of_life", "disambig-dark", "gnome", "office-book", "audio-input-microphone",
             "hsutvald2", "hspolitic", "hsdagensdatum", "hsvissteduatt", "pl_wiki_aktualnosci_ikona",
             "hsbild", "wiki_aktualnosci_ikona", "hs_vdq", "hssamarbete", "hswpedia", "w-circle",
-            "red_pencil_icon"
+            "red_pencil_icon", "merge-arrow", "generic_with_pencil", "hsaktuell", "hsearth",
+            "wikimedia-logo-circle", "wiktionary_ko_without_text", "mediawiki-notext",
+            "wiktprintable_without_text", "dialog-information", "applications-office",
+            "celestia", "antistub"
         ];
         // list of tags of images to have color inverted
         var invert_src_tag = [
             "loudspeaker", "signature", "signatur", "chinese_characters", "/media/math/render/",
-            "translation_to_english_arrow", "disambig_gray", "wikimedia-logo_black"
+            "translation_to_english_arrow", "disambig_gray", "wikimedia-logo_black", "blue_pencil"
         ];
         // loop over the `exclude_src_tag` list to set background color
         for (var i = 0; i < exclude_src_tag.length; i++) {
