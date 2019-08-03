@@ -27,6 +27,6 @@ To install:
 
 **Before** | **After**
 --- | ---
-![A wikipedia page](/screenshots/before.png) | ![A wikipedia page](/screenshots/after.png)
+![A wikipedia page](/screenshots/before.png) | ![A dark wikipedia page](/screenshots/after.png)
 
  
