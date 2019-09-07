@@ -7,7 +7,7 @@ The script reverts the text color and set the page background to black.
 Provide a premium reading experience during both day and night.  
 Easy on the eyes, pleasant in the heart.  
 
-_Note: using this script will affect page loading speed._  
+_Note: using this script WILL affect page loading speed; currently only optimized for English Wiki pages._
 
 **Also available on : [Greasy Fork](https://greasyfork.org/en/scripts/382833-wikipedia-dark-theme)**  
 
