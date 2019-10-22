@@ -1,19 +1,19 @@
 // ==UserScript==
-// @name         Wikipedia Dark Theme
-// @namespace    https://github.com/MaxsLi/WikipediaDarkTheme
-// @version      0.90
-// @icon         https://www.wikipedia.org/favicon.ico
-// @description  Script gives wikipedia pages a dark color theme
 // @author       Shangru Li
+// @version      0.91
 // @match        *://*.wikipedia.org/*
+// @namespace    https://github.com/MaxsLi/WikipediaDarkTheme
+// @icon         https://www.wikipedia.org/favicon.ico
 // @grant        none
 // @run-at       document-start
 // @license      MIT
 //###############---localizations---##################
-// @name:zh             维基百科黑色主题
-// @description:zh      给予维基百科网页一个黑色主题
-// @name:ja             Wikipedia ダークテーマ
-// @description:ja      Wikipediaのサイトのバックグラウンドを黒に変更するスクリプトです
+// @name            Wikipedia Dark Theme
+// @description     Script gives Wikipedia pages a dark color theme
+// @name:ja         Wikipediaダークテーマ
+// @description:ja  Wikipediaのサイトのバックグラウンドを黒に変更するスクリプトです
+// @name:zh         维基百科黑色主题
+// @description:zh  给予维基百科网页一个黑色主题
 // ==/UserScript==
 
 // The main function is called at every `onreadystatechange`
@@ -49,24 +49,28 @@
         "wiktprintable_without_text", "dialog-information", "applications-office",
         "celestia", "antistub", "wiki_letter", "kit_body_basketball", "ui_icon_edit-ltr-progressive",
         "merge-split-transwiki", "mergefrom", "px-steady", "px-decrease", "px-increase",
-        "question_book", "unbalanced_scales", "padlock-silver"
+        "question_book", "padlock-silver", "incubator-logo", "px-chinese_conversion",
+        "px-applications-graphics", "px-pody_candidate", "px-potd-logo", "px-pd-icon",
+        "px-dialog-warning", "px-checked_copyright_icon", "px-valued_image_seal",
+        "px-cscr-former"
     ];
 
     // list of tags of images to have color inverted, both lists are subjected to amend
     var invert_src_tag = [
         "loudspeaker", "signature", "signatur", "chinese_characters", "/media/math/render/",
         "translation_to_english_arrow", "disambig_gray", "wikimedia-logo_black", "blue_pencil",
-        "latin_alphabet_", "_cursiva"
+        "latin_alphabet_", "_cursiva", "unbalanced_scales", "question%2c_web_fundamentals"
     ];
 
     //##################---controller---#########################################
 
-    if ('loading' == document.readyState)
+    if ('loading' == document.readyState) {
         setPageVisibility("hidden");
-    else if ('interactive' == document.readyState)
+    } else if ('interactive' == document.readyState) {
         setPage();
-    else if ('complete' == document.readyState)
+    } else if ('complete' == document.readyState) {
         setPageVisibility("visible");
+    }
 
     //##################---functions---#########################################
 
@@ -114,28 +118,35 @@
     }
 
     function elementIsImage(e) {
-        if (e.nodeName.toLowerCase() == 'img')
+        if (e.nodeName.toLowerCase() == 'img') {
             return true;
+        }
     }
 
     function changeImageIfOnLists(img) {
-        if (!imageInExcludeList(img))
+        if (!imageInExcludeList(img)) {
             img.style.backgroundColor = "rgb(255, 255, 255)";
-        if (imageInInvertList(img))
+        }
+        if (imageInInvertList(img)) {
             invertImage(img, 86);
+        }
     }
 
     function imageInExcludeList(img) {
-        for (var i = 0; i < exclude_src_tag.length; i++)
-            if (img.src.toLowerCase().includes(exclude_src_tag[i]))
+        for (var i = 0; i < exclude_src_tag.length; i++) {
+            if (img.src.toLowerCase().includes(exclude_src_tag[i])) {
                 return true;
+            }
+        }
         return false;
     }
 
     function imageInInvertList(img) {
-        for (var i = 0; i < invert_src_tag.length; i++)
-            if (img.src.toLowerCase().includes(invert_src_tag[i]))
+        for (var i = 0; i < invert_src_tag.length; i++) {
+            if (img.src.toLowerCase().includes(invert_src_tag[i])) {
                 return true;
+            }
+        }
         return false;
     }
 
@@ -144,21 +155,24 @@
     }
 
     function elementIsWikiLogo(e) {
-        if (e.className.toLowerCase().includes("mw-wiki-logo"))
+        if (e.className.toLowerCase().includes("mw-wiki-logo")) {
             return true;
+        }
     }
 
     function elementIsKeyboardKey(e) {
-        if (e.className.toLowerCase().includes('keyboard-key'))
+        if (e.className.toLowerCase().includes('keyboard-key')) {
             return true;
+        }
     }
 
     function elementIsLegendOrPieCharts(e) {
         if (e.className.toLowerCase().includes('legend') ||
             e.className.toLowerCase().includes('border') ||
             e.style.borderColor.toLowerCase().includes('transparent') ||
-            e.style.border.toLowerCase().includes("1px solid rgb(0, 0, 0)"))
+            e.style.border.toLowerCase().includes("1px solid rgb(0, 0, 0)")) {
             return true;
+        }
     }
 
     function changeForegroundColor(e) {
@@ -178,8 +192,9 @@
         if (colorIsRGB(backgroundColor)) {
             backgroundColor = splitToRGB(backgroundColor);
             backgroundColor = inverseRBGColor(backgroundColor);
-            if (RGBTooDark(backgroundColor))
+            if (RGBTooDark(backgroundColor)) {
                 backgroundColor = addValueToRGB(backgroundColor, 30);
+            }
             backgroundColor = decreaseRGBToMatchContrastValue(backgroundColor, default_backgroundColorRGB, default_contrastValue, -30);
             e.style.backgroundColor = RGBArrayToString(backgroundColor);
         } else {
@@ -206,15 +221,17 @@
 
     function increaseRGBToMatchContrastValue(colorToChange, colorToMatch, contrastValue, changePerLoop) {
         var result = colorToChange;
-        while (contrast(result, colorToMatch) < contrastValue)
+        while (contrast(result, colorToMatch) < contrastValue) {
             result = addValueToRGB(result, changePerLoop);
+        }
         return result;
     }
 
     function decreaseRGBToMatchContrastValue(colorToChange, colorToMatch, contrastValue, changePerLoop) {
         var result = colorToChange;
-        while (contrast(result, colorToMatch) > contrastValue)
+        while (contrast(result, colorToMatch) > contrastValue) {
             result = addValueToRGB(result, changePerLoop);
+        }
         return result;
     }
 
@@ -236,8 +253,9 @@
 
     function RGBTooDark(rgb) {
         if (rgb[0] < default_backgroundColorRGB[0] - 10 && rgb[1] < default_backgroundColorRGB[1] - 10 &&
-            rgb[2] < default_backgroundColorRGB[2] - 10)
+            rgb[2] < default_backgroundColorRGB[2] - 10) {
             return true;
+        }
     }
 
     function RGBArrayToString(rgb) {
