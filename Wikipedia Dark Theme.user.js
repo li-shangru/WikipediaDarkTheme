@@ -8,12 +8,14 @@
 // @run-at       document-start
 // @license      MIT
 //###############---localizations---##################
-// @name            Wikipedia Dark Theme
-// @description     Script gives Wikipedia pages a dark color theme
-// @name:ja         Wikipediaダークテーマ
-// @description:ja  Wikipediaのサイトのバックグラウンドを黒に変更するスクリプトです
-// @name:zh         维基百科黑色主题
-// @description:zh  给予维基百科网页一个黑色主题
+// @name                Wikipedia Dark Theme
+// @description         Script gives Wikipedia pages a dark color theme
+// @name:ja             Wikipediaダークテーマ
+// @description:ja      Wikipediaのサイトのバックグラウンドを黒に変更するスクリプトです
+// @name:zh-CN          维基百科黑色主题
+// @description:zh-CN   给予维基百科网页一个黑色主题
+// @name:zh-TW          维基百科黑色主题
+// @description:zh-TW   給予維基百科網頁壹個黑色主題
 // ==/UserScript==
 
 // The main function is called at every `onreadystatechange`
