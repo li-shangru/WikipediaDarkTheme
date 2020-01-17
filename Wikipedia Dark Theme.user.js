@@ -1,4 +1,5 @@
 // ==UserScript==
+// @name         Wikipedia Dark Theme
 // @author       Shangru Li
 // @version      0.92
 // @match        *://*.wikipedia.org/*
