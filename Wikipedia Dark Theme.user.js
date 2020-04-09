@@ -1,11 +1,12 @@
 // ==UserScript==
 // @name         Wikipedia Dark Theme
 // @author       Shangru Li
-// @version      0.92
+// @version      1.00
 // @match        *://*.wikipedia.org/*
 // @namespace    https://github.com/MaxsLi/WikipediaDarkTheme
 // @icon         https://www.wikipedia.org/favicon.ico
-// @grant        none
+// @grant        GM_setValue
+// @grant        GM_getValue
 // @run-at       document-start
 // @license      MIT
 //###############---localizations---##################
@@ -55,7 +56,7 @@
         "question_book", "padlock-silver", "incubator-logo", "px-chinese_conversion",
         "px-applications-graphics", "px-pody_candidate", "px-potd-logo", "px-pd-icon",
         "px-dialog-warning", "px-checked_copyright_icon", "px-valued_image_seal",
-        "px-cscr-former", "px-red_x", "px-crystal_clear_app_kedit"
+        "px-cscr-former", "px-red_x", "px-crystal_clear_app_kedit", "px-people_icon"
     ];
 
     // list of tags of images to have color inverted, both lists are subjected to amend
@@ -65,17 +66,58 @@
         "latin_alphabet_", "_cursiva", "unbalanced_scales", "question%2c_web_fundamentals"
     ];
 
-    //##################---controller---#########################################
+    //##################___Controller___########################################
 
-    if ('loading' == document.readyState) {
+    if (!GM_getValue("scriptEnabled")) {
+        addToggleScriptElement();
+        return false;
+    } else if ('loading' == document.readyState) {
         setPageVisibility("hidden");
     } else if ('interactive' == document.readyState) {
         setPage();
     } else if ('complete' == document.readyState) {
         setPageVisibility("visible");
+        invertChineseConversionBox();
+        addToggleScriptElement();
     }
 
-    //##################---functions---#########################################
+    //##################___Toggle_Link___#######################################
+
+    function addToggleScriptElement() {
+        const loginLinkElement = document.getElementById("pt-login");
+        const logoutLinkElement = document.getElementById("pt-logout");
+        // Two cases: user logged-in or not logged-in
+        // Get the parent of either element that is defined
+        const parentList = (loginLinkElement) ? (loginLinkElement.parentElement) : (logoutLinkElement.parentElement);
+        var toggleScriptList = document.createElement('li');
+        var toggleScriptElement = document.createElement('a');
+        toggleScriptElement.id = "toggleScriptElement";
+        toggleScriptElement.style.fontWeight = 'bold';
+        toggleScriptElement.onclick = function () {
+            // `GM_setValue()` and `GM_getValue()` are from Tampermonkey API
+            GM_setValue("scriptEnabled", !GM_getValue("scriptEnabled"));
+            location.reload();
+            return false;
+        };
+        toggleScriptList.appendChild(toggleScriptElement);
+        parentList.appendChild(toggleScriptList);
+        updateToggleScriptElement();
+    }
+
+    function updateToggleScriptElement() {
+        const toggleScriptElement = document.getElementById("toggleScriptElement");
+        if (GM_getValue("scriptEnabled")) {
+            toggleScriptElement.text = "Disable Dark Theme";
+            toggleScriptElement.title = "Click to disable Wikipedia Dark Theme."
+            toggleScriptElement.style.color = "white";
+        } else {
+            toggleScriptElement.text = "Enable Dark Theme";
+            toggleScriptElement.title = "Click to enable Wikipedia Dark Theme."
+            toggleScriptElement.style.color = "black";
+        }
+    }
+
+    //##################___Functions___#########################################
 
     function setPageVisibility(visibility) {
         var entirePage = document.getElementsByTagName('html')[0];
@@ -191,7 +233,8 @@
     }
 
     function changeBackgroundColor(e) {
-        var backgroundColor = window.getComputedStyle(e, null).getPropertyValue("background-color");
+        const elementComputedStyle = window.getComputedStyle(e, null);
+        var backgroundColor = elementComputedStyle.getPropertyValue("background-color");
         if (colorIsRGB(backgroundColor)) {
             backgroundColor = splitToRGB(backgroundColor);
             backgroundColor = inverseRBGColor(backgroundColor);
@@ -202,6 +245,19 @@
             e.style.backgroundColor = RGBArrayToString(backgroundColor);
         } else {
             e.style.backgroundColor = default_backgroundColor;
+        }
+        const backgroundImage = elementComputedStyle.getPropertyValue("background-image");
+        if (backgroundImageToRemove(backgroundImage)) {
+            e.style.background = default_backgroundColor;
+        }
+    }
+
+    function backgroundImageToRemove(backgroundImage) {
+        if (backgroundImage) {
+            // This link removed the white banner on Chinese Wikipedia main page
+            if (backgroundImage.includes("Zhwp_blue_banner.png")) {
+                return true;
+            }
         }
     }
 
@@ -216,9 +272,9 @@
 
     function inverseRBGColor(c) {
         var r, g, b;
-        r = 255 - c[0];
-        g = 255 - c[1];
-        b = 255 - c[2];
+        r = 255 - Number(c[0]);
+        g = 255 - Number(c[1]);
+        b = 255 - Number(c[2]);
         return [r, g, b];
     }
 
@@ -251,17 +307,24 @@
     }
 
     function addValueToRGB(rgb, value) {
-        return [rgb[0] + value, rgb[1] + value, rgb[2] + value];
+        return [Number(rgb[0]) + Number(value), Number(rgb[1]) + Number(value), Number(rgb[2]) + Number(value)];
     }
 
     function RGBTooDark(rgb) {
-        if (rgb[0] < default_backgroundColorRGB[0] - 10 && rgb[1] < default_backgroundColorRGB[1] - 10 &&
-            rgb[2] < default_backgroundColorRGB[2] - 10) {
+        if (Number(rgb[0]) < Number(default_backgroundColorRGB[0]) - 10 && Number(rgb[1]) < Number(default_backgroundColorRGB[1]) - 10 &&
+            Number(rgb[2]) < Number(default_backgroundColorRGB[2]) - 10) {
             return true;
         }
     }
 
     function RGBArrayToString(rgb) {
         return 'rgb(' + rgb[0] + ', ' + rgb[1] + ', ' + rgb[2] + ')';
+    }
+
+    function invertChineseConversionBox() {
+        var sheet = window.document.styleSheets[0];
+        sheet.insertRule('.vectorTabs li { background-image: none; }', sheet.cssRules.length);
+        sheet.insertRule('.vectorTabs li a span { background: ' + default_backgroundColor + ' !important; }', sheet.cssRules.length);
+        sheet.insertRule('.vectorTabs li a span { color: ' + default_foregroundColor + ' !important; }', sheet.cssRules.length);
     }
 })();
