@@ -21,7 +21,7 @@ To install:
 
 * An install page should pop up automatically.
 
-* Click the `Enable Dark Theme` option on the top right corner.
+* Click the `Enable Dark Theme` option in the top right corner.
 
 ## Screenshots
 
