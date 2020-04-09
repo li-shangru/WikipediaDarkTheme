@@ -17,9 +17,7 @@ Requires **[Tampermonkey](https://www.tampermonkey.net/)** or other user script 
 
 To install:
 
-* Click the `Wikipedia Dark Theme.user.js` file.
-
-* Click the `Raw` button on the file's top right corner.
+* Click this [`Wikipedia Dark Theme.user.js`](https://github.com/MaxsLi/WikipediaDarkTheme/raw/master/Wikipedia%20Dark%20Theme.user.js) file.
 
 * An install page should pop up automatically.
 
