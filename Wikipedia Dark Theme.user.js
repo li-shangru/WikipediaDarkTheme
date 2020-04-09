@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Wikipedia Dark Theme
 // @author       Shangru Li
-// @version      1.00
+// @version      1.01
 // @match        *://*.wikipedia.org/*
 // @namespace    https://github.com/MaxsLi/WikipediaDarkTheme
 // @icon         https://www.wikipedia.org/favicon.ico
@@ -106,14 +106,41 @@
 
     function updateToggleScriptElement() {
         const toggleScriptElement = document.getElementById("toggleScriptElement");
-        if (GM_getValue("scriptEnabled")) {
-            toggleScriptElement.text = "Disable Dark Theme";
-            toggleScriptElement.title = "Click to disable Wikipedia Dark Theme."
-            toggleScriptElement.style.color = "white";
-        } else {
-            toggleScriptElement.text = "Enable Dark Theme";
-            toggleScriptElement.title = "Click to enable Wikipedia Dark Theme."
-            toggleScriptElement.style.color = "black";
+        const language = window.location.href.substring(0, window.location.href.indexOf(".wikipedia")).slice(-2);
+        switch (language) {
+            case "zh":
+                if (GM_getValue("scriptEnabled")) {
+                    toggleScriptElement.text = "关闭黑色主题";
+                    toggleScriptElement.title = "单击来关闭维基百科黑色主题。"
+                    toggleScriptElement.style.color = "white";
+                } else {
+                    toggleScriptElement.text = "打开黑色主题";
+                    toggleScriptElement.title = "单击来打开维基百科黑色主题。"
+                    toggleScriptElement.style.color = "black";
+                }
+                break;
+            case "ja":
+                if (GM_getValue("scriptEnabled")) {
+                    toggleScriptElement.text = "ダークテーマを解除する";
+                    toggleScriptElement.title = "ここをクリックしてダークテーマから切り替わる。"
+                    toggleScriptElement.style.color = "white";
+                } else {
+                    toggleScriptElement.text = "ダークテーマを設定する";
+                    toggleScriptElement.title = "ここをクリックしてダークテーマに切り替わる。"
+                    toggleScriptElement.style.color = "black";
+                }
+                break;
+            default:
+                if (GM_getValue("scriptEnabled")) {
+                    toggleScriptElement.text = "Disable Dark Theme";
+                    toggleScriptElement.title = "Click to disable Wikipedia Dark Theme."
+                    toggleScriptElement.style.color = "white";
+                } else {
+                    toggleScriptElement.text = "Enable Dark Theme";
+                    toggleScriptElement.title = "Click to enable Wikipedia Dark Theme."
+                    toggleScriptElement.style.color = "black";
+                }
+                break;
         }
     }
 
