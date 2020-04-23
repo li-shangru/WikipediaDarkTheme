@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Wikipedia Dark Theme
 // @author       Shangru Li
-// @version      1.01
+// @version      1.02
 // @match        *://*.wikipedia.org/*
 // @namespace    https://github.com/MaxsLi/WikipediaDarkTheme
 // @icon         https://www.wikipedia.org/favicon.ico
@@ -26,14 +26,14 @@
 (document.onreadystatechange = function () {
 
     //##################---default_values---#####################################
-    var default_contrastValue = 8;
-    var default_foregroundColor = "rgb(238, 255, 255)";
-    var default_backgroundColor = "rgb(35, 35, 35)";
-    var default_backgroundColorRGB = splitToRGB(default_backgroundColor);
+    const default_contrastValue = 8;
+    const default_foregroundColor = "rgb(238, 255, 255)";
+    const default_backgroundColor = "rgb(35, 35, 35)";
+    const default_backgroundColorRGB = splitToRGB(default_backgroundColor);
     //##################---one_could_alter_if_desired---#########################
 
     // list of tags of the wikipedia logos and symbols to be excluded from setting backgroundColor to white
-    var exclude_src_tag = [
+    const exclude_src_tag = [
         "protection-shackle", "green_check", "symbol_support_vote",
         "edit-clear", "information_icon", "increase2", "decrease_positive",
         "steady2", "decrease2", "increase_negative", "red_question_mark",
@@ -60,25 +60,29 @@
     ];
 
     // list of tags of images to have color inverted, both lists are subjected to amend
-    var invert_src_tag = [
+    const invert_src_tag = [
         "loudspeaker", "signature", "signatur", "chinese_characters", "/media/math/render/",
         "translation_to_english_arrow", "disambig_gray", "wikimedia-logo_black", "blue_pencil",
         "latin_alphabet_", "_cursiva", "unbalanced_scales", "question%2c_web_fundamentals"
     ];
+
+    const locale = window.location.href.substring(0, window.location.href.indexOf(".wikipedia")).slice(-2);
 
     //##################___Controller___########################################
 
     if (!GM_getValue("scriptEnabled")) {
         addToggleScriptElement();
         return false;
-    } else if ('loading' == document.readyState) {
+    } else if ('loading' === document.readyState) {
         setPageVisibility("hidden");
-    } else if ('interactive' == document.readyState) {
+    } else if ('interactive' === document.readyState) {
         setPage();
-    } else if ('complete' == document.readyState) {
+    } else if ('complete' === document.readyState) {
         setPageVisibility("visible");
-        invertChineseConversionBox();
         addToggleScriptElement();
+        if (locale === "zh") {
+            invertChineseConversionBox();
+        }
     }
 
     //##################___Toggle_Link___#######################################
@@ -89,8 +93,8 @@
         // Two cases: user logged-in or not logged-in
         // Get the parent of either element that is defined
         const parentList = (loginLinkElement) ? (loginLinkElement.parentElement) : (logoutLinkElement.parentElement);
-        var toggleScriptList = document.createElement('li');
-        var toggleScriptElement = document.createElement('a');
+        let toggleScriptList = document.createElement('li');
+        let toggleScriptElement = document.createElement('a');
         toggleScriptElement.id = "toggleScriptElement";
         toggleScriptElement.style.fontWeight = 'bold';
         toggleScriptElement.onclick = function () {
@@ -106,8 +110,7 @@
 
     function updateToggleScriptElement() {
         const toggleScriptElement = document.getElementById("toggleScriptElement");
-        const language = window.location.href.substring(0, window.location.href.indexOf(".wikipedia")).slice(-2);
-        switch (language) {
+        switch (locale) {
             case "zh":
                 if (GM_getValue("scriptEnabled")) {
                     toggleScriptElement.text = "关闭黑色主题";
@@ -140,14 +143,13 @@
                     toggleScriptElement.title = "Click to enable Wikipedia Dark Theme."
                     toggleScriptElement.style.color = "black";
                 }
-                break;
         }
     }
 
     //##################___Functions___#########################################
 
     function setPageVisibility(visibility) {
-        var entirePage = document.getElementsByTagName('html')[0];
+        let entirePage = document.getElementsByTagName('html')[0];
         entirePage.style.backgroundColor = default_backgroundColor;
         entirePage.style.visibility = visibility;
     }
@@ -157,10 +159,10 @@
         // General idea is to put all elements on a wikipedia page to an array `allElements`
         // traverse through this array and reverse the color of each element accordingly
         // running time o(n), where n is the number of elements on a page
-        var allElements = document.querySelectorAll('*');
+        let allElements = document.querySelectorAll('*');
 
-        for (var i = 0; i < allElements.length; i++) {
-            var currentElement = allElements[i];
+        for (let i = 0; i < allElements.length; i++) {
+            let currentElement = allElements[i];
             try {
                 if (!isSpecialElement(currentElement)) {
                     changeForegroundColor(currentElement);
@@ -190,7 +192,7 @@
     }
 
     function elementIsImage(e) {
-        if (e.nodeName.toLowerCase() == 'img') {
+        if (e.nodeName.toLowerCase() === 'img') {
             return true;
         }
     }
@@ -205,7 +207,7 @@
     }
 
     function imageInExcludeList(img) {
-        for (var i = 0; i < exclude_src_tag.length; i++) {
+        for (let i = 0; i < exclude_src_tag.length; i++) {
             if (img.src.toLowerCase().includes(exclude_src_tag[i])) {
                 return true;
             }
@@ -214,7 +216,7 @@
     }
 
     function imageInInvertList(img) {
-        for (var i = 0; i < invert_src_tag.length; i++) {
+        for (let i = 0; i < invert_src_tag.length; i++) {
             if (img.src.toLowerCase().includes(invert_src_tag[i])) {
                 return true;
             }
@@ -248,7 +250,7 @@
     }
 
     function changeForegroundColor(e) {
-        var foregroundColor = window.getComputedStyle(e, null).getPropertyValue("color");
+        let foregroundColor = window.getComputedStyle(e, null).getPropertyValue("color");
         if (colorIsRGB(foregroundColor)) {
             foregroundColor = splitToRGB(foregroundColor);
             foregroundColor = inverseRBGColor(foregroundColor);
@@ -261,7 +263,7 @@
 
     function changeBackgroundColor(e) {
         const elementComputedStyle = window.getComputedStyle(e, null);
-        var backgroundColor = elementComputedStyle.getPropertyValue("background-color");
+        let backgroundColor = elementComputedStyle.getPropertyValue("background-color");
         if (colorIsRGB(backgroundColor)) {
             backgroundColor = splitToRGB(backgroundColor);
             backgroundColor = inverseRBGColor(backgroundColor);
@@ -281,7 +283,7 @@
 
     function backgroundImageToRemove(backgroundImage) {
         if (backgroundImage) {
-            // This link removed the white banner on Chinese Wikipedia main page
+            // This will remove the white banner on Chinese Wikipedia main page
             if (backgroundImage.includes("Zhwp_blue_banner.png")) {
                 return true;
             }
@@ -293,12 +295,12 @@
     }
 
     function splitToRGB(c) {
-        var rgb = colorIsRGB(c);
+        const rgb = colorIsRGB(c);
         return [rgb[1], rgb[2], rgb[3]];
     }
 
     function inverseRBGColor(c) {
-        var r, g, b;
+        let r, g, b;
         r = 255 - Number(c[0]);
         g = 255 - Number(c[1]);
         b = 255 - Number(c[2]);
@@ -306,7 +308,7 @@
     }
 
     function increaseRGBToMatchContrastValue(colorToChange, colorToMatch, contrastValue, changePerLoop) {
-        var result = colorToChange;
+        let result = colorToChange;
         while (contrast(result, colorToMatch) < contrastValue) {
             result = addValueToRGB(result, changePerLoop);
         }
@@ -314,7 +316,7 @@
     }
 
     function decreaseRGBToMatchContrastValue(colorToChange, colorToMatch, contrastValue, changePerLoop) {
-        var result = colorToChange;
+        let result = colorToChange;
         while (contrast(result, colorToMatch) > contrastValue) {
             result = addValueToRGB(result, changePerLoop);
         }
@@ -326,7 +328,7 @@
     }
 
     function luminance(rgb) {
-        var result = rgb.map(function (v) {
+        let result = rgb.map(function (v) {
             v /= 255;
             return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
         });
@@ -349,7 +351,7 @@
     }
 
     function invertChineseConversionBox() {
-        var sheet = window.document.styleSheets[0];
+        let sheet = window.document.styleSheets[0];
         sheet.insertRule('.vectorTabs li { background-image: none; }', sheet.cssRules.length);
         sheet.insertRule('.vectorTabs li a span { background: ' + default_backgroundColor + ' !important; }', sheet.cssRules.length);
         sheet.insertRule('.vectorTabs li a span { color: ' + default_foregroundColor + ' !important; }', sheet.cssRules.length);
