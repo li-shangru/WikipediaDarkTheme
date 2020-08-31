@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Wikipedia Dark Theme
 // @author       Shangru Li
-// @version      1.11
+// @version      1.12
 // @match        *://*.wikipedia.org/*
 // @namespace    https://github.com/MaxsLi/WikipediaDarkTheme
 // @icon         https://www.wikipedia.org/favicon.ico
@@ -188,13 +188,7 @@ function elementIsLegendOrPieCharts(e) {
     if (e.className.toLowerCase().includes('legend') ||
         e.style.borderColor.toLowerCase().includes('transparent') ||
         (
-            (
-                e.style.border.toLowerCase().includes("1px solid rgb(0, 0, 0)") ||
-                e.style.border.toLowerCase().includes("1px solid black")
-            ) &&
-            (
-                e.style.width === "1.5em" && e.style.height === "1.5em"
-            )
+            e.nodeName === "SPAN" && e.textContent.replace(/\s/g, '').length === 0
         )
     ) {
         return true;
