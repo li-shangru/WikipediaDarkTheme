@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Wikipedia Dark Theme
 // @author       Shangru Li
-// @version      1.13
+// @version      1.14
 // @match        *://*.wikipedia.org/*
 // @namespace    https://github.com/MaxsLi/WikipediaDarkTheme
 // @icon         https://www.wikipedia.org/favicon.ico
@@ -98,7 +98,6 @@ function setPage() {
     // traverse through this array and reverse the color of each element accordingly
     // running time o(n), where n is the number of elements on a page
     let allElements = document.querySelectorAll('*');
-
     for (let i = 0; i < allElements.length; i++) {
         let currentElement = allElements[i];
         try {
@@ -130,11 +129,7 @@ function isSpecialElement(e) {
 }
 
 function elementIsImage(e) {
-    if (e.nodeName.toLowerCase() === 'img') {
-        return true;
-    } else {
-        return false;
-    }
+    return e.nodeName.toLowerCase() === 'img';
 }
 
 function changeImageIfOnLists(img) {
@@ -169,19 +164,11 @@ function invertImage(img, percent) {
 }
 
 function elementIsWikiLogo(e) {
-    if (e.className.toLowerCase().includes("mw-wiki-logo")) {
-        return true;
-    } else {
-        return false;
-    }
+    return e.className.toLowerCase().includes("mw-wiki-logo");
 }
 
 function elementIsKeyboardKey(e) {
-    if (e.className.toLowerCase().includes('keyboard-key')) {
-        return true;
-    } else {
-        return false;
-    }
+    return e.className.toLowerCase().includes('keyboard-key');
 }
 
 function elementIsLegendOrPieCharts(e) {
@@ -240,12 +227,8 @@ function changeBackgroundColor(e) {
 }
 
 function backgroundImageToRemove(backgroundImage) {
-    if (backgroundImage) {
-        // This will remove the white banner on Chinese Wikipedia main page
-        if (backgroundImage.includes("Zhwp_blue_banner.png")) {
-            return true;
-        }
-    }
+    // This will remove the white banner on Chinese Wikipedia main page
+    return backgroundImage && backgroundImage.includes("Zhwp_blue_banner.png");
 }
 
 function colorIsRGB(c) {
