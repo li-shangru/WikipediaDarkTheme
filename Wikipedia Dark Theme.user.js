@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Wikipedia Dark Theme
 // @author       Shangru Li
-// @version      1.14
+// @version      1.15
 // @match        *://*.wikipedia.org/*
 // @namespace    https://github.com/MaxsLi/WikipediaDarkTheme
 // @icon         https://www.wikipedia.org/favicon.ico
@@ -69,19 +69,20 @@ const locale = window.location.href.substring(0, window.location.href.indexOf(".
 // Document state will go from `loading` --> `interactive` --> `complete`
 // Metadata Block `@run-at document-start` will ensure the script start executing when `loading`
 (document.onreadystatechange = function () {
-    if (!GM_getValue("scriptEnabled")) {
-        addToggleScriptElement();
-        return false;
-    } else if ('loading' === document.readyState) {
-        setPageVisibility("hidden");
-    } else if ('interactive' === document.readyState) {
-        setPage();
-    } else if ('complete' === document.readyState) {
-        setPageVisibility("visible");
-        addToggleScriptElement();
-        if (locale === "zh") {
-            invertChineseConversionBox();
+    if (GM_getValue("scriptEnabled")) {
+        if ('loading' === document.readyState) {
+            setPageVisibility("hidden");
+        } else if ('interactive' === document.readyState) {
+            applyDarkTheme();
+        } else if ('complete' === document.readyState) {
+            setPageVisibility("visible");
+            addToggleScriptElement();
+            if (locale === "zh") {
+                invertChineseConversionBox();
+            }
         }
+    } else {
+        addToggleScriptElement();
     }
 })();
 
@@ -93,7 +94,7 @@ function setPageVisibility(visibility) {
     entirePage.style.visibility = visibility;
 }
 
-function setPage() {
+function applyDarkTheme() {
     // General idea is to put all elements on a wikipedia page to an array `allElements`
     // traverse through this array and reverse the color of each element accordingly
     // running time o(n), where n is the number of elements on a page
@@ -327,7 +328,7 @@ function updateToggleScriptElement() {
             if (GM_getValue("scriptEnabled")) {
                 setToggleScriptElement("关闭黑色主题", "单击来关闭维基百科黑色主题。", "white");
             } else {
-                setToggleScriptElement("打开黑色主题", "单击来打开维基百科黑色主题。", "black");
+                setToggleScriptElement("开启黑色主题", "单击来开启维基百科黑色主题。", "black");
             }
             break;
         case "ja":
