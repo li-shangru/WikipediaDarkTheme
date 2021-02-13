@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Wikipedia Dark Theme
 // @author       Shangru Li
-// @version      1.20
+// @version      1.21
 // @match        *://*.wikipedia.org/*
 // @namespace    https://github.com/MaxsLi/WikipediaDarkTheme
 // @icon         https://www.wikipedia.org/favicon.ico
@@ -10,8 +10,8 @@
 // @run-at       document-start
 // @license      MIT
 //###############---localizations---##################
-// @name             Wikipedia Dark Theme
-// @description      Script gives Wikipedia pages a dark color theme
+// @name                Wikipedia Dark Theme
+// @description         Script gives Wikipedia pages a dark color theme
 // @name:ja             Wikipediaダークテーマ
 // @description:ja      Wikipediaのサイトのバックグラウンドを黒に変更するスクリプトです
 // @name:zh-CN          维基百科黑色主题
@@ -48,12 +48,13 @@ const exclude_src_tag = [
     "red_pencil_icon", "merge-arrow", "generic_with_pencil", "hsaktuell", "hsearth",
     "wikimedia-logo-circle", "wiktionary_ko_without_text", "mediawiki-notext",
     "wiktprintable_without_text", "dialog-information", "applications-office",
-    "celestia", "antistub", "wiki_letter", "kit_body_basketball", "ui_icon_edit-ltr-progressive",
+    "celestia", "antistub", "wiki_letter", "kit_body", "ui_icon_edit-ltr-progressive",
     "merge-split-transwiki", "mergefrom", "px-steady", "px-decrease", "px-increase",
     "question_book", "padlock-silver", "incubator-logo", "px-chinese_conversion",
     "px-applications-graphics", "px-pody_candidate", "px-potd-logo", "px-pd-icon",
     "px-dialog-warning", "px-checked_copyright_icon", "px-valued_image_seal",
-    "px-cscr-former", "px-red_x", "px-crystal_clear_app_kedit", "px-people_icon"
+    "px-cscr-former", "px-red_x", "px-crystal_clear_app_kedit", "px-people_icon",
+    "kit_shorts", "kit_socks"
 ];
 
 // list of tags of images to have color inverted, both lists are subjected to amend
