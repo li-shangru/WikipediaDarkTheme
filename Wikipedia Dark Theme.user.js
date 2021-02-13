@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Wikipedia Dark Theme
 // @author       Shangru Li
-// @version      1.15
+// @version      1.20
 // @match        *://*.wikipedia.org/*
 // @namespace    https://github.com/MaxsLi/WikipediaDarkTheme
 // @icon         https://www.wikipedia.org/favicon.ico
@@ -218,7 +218,7 @@ function changeBackgroundColor(e) {
         }
         backgroundColor = decreaseRGBToMatchContrastValue(backgroundColor, default_backgroundColorRGB, default_contrastValue, -30);
         e.style.backgroundColor = RGBArrayToString(backgroundColor);
-    } else {
+    } else if (backgroundColor !== "rgba(0, 0, 0, 0)" || elementToChangeBackground(e)) {
         e.style.backgroundColor = default_backgroundColor;
     }
     const backgroundImage = elementComputedStyle.getPropertyValue("background-image");
@@ -297,6 +297,10 @@ function invertChineseConversionBox() {
     sheet.insertRule('.vectorTabs li { background-image: none; }', sheet.cssRules.length);
     sheet.insertRule('.vectorTabs li a span { background: ' + default_backgroundColor + ' !important; }', sheet.cssRules.length);
     sheet.insertRule('.vectorTabs li a span { color: ' + default_foregroundColor + ' !important; }', sheet.cssRules.length);
+}
+
+function elementToChangeBackground(e) {
+    return e.id.toLowerCase().includes("mw-head") || e.parentElement.id.includes("ca-");
 }
 
 //##################___Toggle_Link___#######################################
