@@ -1,15 +1,25 @@
 // ==UserScript==
 // @name         Wikipedia Dark Theme
 // @author       Shangru Li
-// @version      1.21
+// @version      1.22
 // @match        *://*.wikipedia.org/*
+// @match        *://*.mediawiki.org/*
+// @match        *://*.wikimedia.org/*
+// @match        *://*.wikibooks.org/*
+// @match        *://*.wikidata.org/*
+// @match        *://*.wikinews.org/*
+// @match        *://*.wikiquote.org/*
+// @match        *://*.wikisource.org/*
+// @match        *://*.wikiversity.org/*
+// @match        *://*.wikivoyage.org/*
+// @match        *://*.wiktionary.org/*
 // @namespace    https://github.com/MaxsLi/WikipediaDarkTheme
 // @icon         https://www.wikipedia.org/favicon.ico
 // @grant        GM_setValue
 // @grant        GM_getValue
 // @run-at       document-start
 // @license      MIT
-//###############---localizations---##################
+//######################___Localizations___#####################################
 // @name                Wikipedia Dark Theme
 // @description         Script gives Wikipedia pages a dark color theme
 // @name:ja             Wikipediaダークテーマ
@@ -22,15 +32,20 @@
 
 'use strict';
 
-//##################---default_values---#####################################
-const default_contrastValue = 8;
-const default_foregroundColor = "rgb(238, 255, 255)";
-const default_backgroundColor = "rgb(35, 35, 35)";
-const default_backgroundColorRGB = splitToRGB(default_backgroundColor);
-//##################---one_could_alter_if_desired---#########################
+//############################################___Default_Colors___######################################################
+const DEFAULT_CONTRAST_VALUE = 8;
+const DEFAULT_FOREGROUND_COLOR = "rgb(238, 255, 255)";
+const DEFAULT_BACKGROUND_COLOR = "rgb(35, 35, 35)";
+//############################################___One_Could_Alter_If_Desired___##########################################
+
+//############################################___Global_Variables___####################################################
+
+const LOCALE = window.location.href.substring(0, window.location.href.indexOf(".wikipedia")).slice(-2);
+
+const DEFAULT_BACKGROUND_COLOR_RGB = splitToRGB(DEFAULT_BACKGROUND_COLOR);
 
 // list of tags of the wikipedia logos and symbols to be excluded from setting backgroundColor to white
-const exclude_src_tag = [
+const EXCLUDE_SRC_TAG = [
     "protection-shackle", "green_check", "symbol_support_vote",
     "edit-clear", "information_icon", "increase2", "decrease_positive",
     "steady2", "decrease2", "increase_negative", "red_question_mark",
@@ -54,21 +69,23 @@ const exclude_src_tag = [
     "px-applications-graphics", "px-pody_candidate", "px-potd-logo", "px-pd-icon",
     "px-dialog-warning", "px-checked_copyright_icon", "px-valued_image_seal",
     "px-cscr-former", "px-red_x", "px-crystal_clear_app_kedit", "px-people_icon",
-    "kit_shorts", "kit_socks"
+    "kit_shorts", "kit_socks", "wikipedia-logo", "phacility_phabricator_logo",
+    "wikimedia_cloud_services_logo", "lingualibre-logo", "le_dico_des_ados_small_logo",
+    "vikidia_v_vectorised"
 ];
 
 // list of tags of images to have color inverted, both lists are subjected to amend
-const invert_src_tag = [
+const INVERT_SRC_TAG = [
     "loudspeaker", "signature", "signatur", "chinese_characters", "/media/math/render/",
     "translation_to_english_arrow", "disambig_gray", "wikimedia-logo_black", "blue_pencil",
     "latin_alphabet_", "_cursiva", "unbalanced_scales", "question%2c_web_fundamentals"
 ];
 
-const locale = window.location.href.substring(0, window.location.href.indexOf(".wikipedia")).slice(-2);
+//############################################___Controller___##########################################################
 
-// The main controller function is called at every `onreadystatechange`
+// The main control function is called at every `onreadystatechange`
 // Document state will go from `loading` --> `interactive` --> `complete`
-// Metadata Block `@run-at document-start` will ensure the script start executing when `loading`
+// Metadata Block `@run-at document-start` will ensure this script start executing when `loading`
 (document.onreadystatechange = function () {
     if (GM_getValue("scriptEnabled")) {
         if ('loading' === document.readyState) {
@@ -78,7 +95,7 @@ const locale = window.location.href.substring(0, window.location.href.indexOf(".
         } else if ('complete' === document.readyState) {
             setPageVisibility("visible");
             addToggleScriptElement();
-            if (locale === "zh") {
+            if (LOCALE === "zh") {
                 invertChineseConversionBox();
             }
         }
@@ -87,11 +104,11 @@ const locale = window.location.href.substring(0, window.location.href.indexOf(".
     }
 })();
 
-//##################___Functions___#########################################
+//############################################___Functions___###########################################################
 
 function setPageVisibility(visibility) {
     let entirePage = document.getElementsByTagName('html')[0];
-    entirePage.style.backgroundColor = default_backgroundColor;
+    entirePage.style.backgroundColor = DEFAULT_BACKGROUND_COLOR;
     entirePage.style.visibility = visibility;
 }
 
@@ -99,7 +116,7 @@ function applyDarkTheme() {
     // General idea is to put all elements on a wikipedia page to an array `allElements`
     // traverse through this array and reverse the color of each element accordingly
     // running time o(n), where n is the number of elements on a page
-    let allElements = document.querySelectorAll('*');
+    const allElements = document.querySelectorAll('*');
     for (let i = 0; i < allElements.length; i++) {
         let currentElement = allElements[i];
         try {
@@ -121,13 +138,9 @@ function isSpecialElement(e) {
         invertImage(e, 90);
         return true;
     } else if (elementIsKeyboardKey(e)) {
-        e.style.foregroundColor = default_backgroundColor;
+        e.style.foregroundColor = DEFAULT_BACKGROUND_COLOR;
         return true;
-    } else if (elementIsLegendOrPieCharts(e)) {
-        return true;
-    } else {
-        return false;
-    }
+    } else return !!elementIsLegendOrPieCharts(e);
 }
 
 function elementIsImage(e) {
@@ -144,8 +157,8 @@ function changeImageIfOnLists(img) {
 }
 
 function imageInExcludeList(img) {
-    for (let i = 0; i < exclude_src_tag.length; i++) {
-        if (img.src.toLowerCase().includes(exclude_src_tag[i])) {
+    for (let i = 0; i < EXCLUDE_SRC_TAG.length; i++) {
+        if (img.src.toLowerCase().includes(EXCLUDE_SRC_TAG[i])) {
             return true;
         }
     }
@@ -153,8 +166,8 @@ function imageInExcludeList(img) {
 }
 
 function imageInInvertList(img) {
-    for (let i = 0; i < invert_src_tag.length; i++) {
-        if (img.src.toLowerCase().includes(invert_src_tag[i])) {
+    for (let i = 0; i < INVERT_SRC_TAG.length; i++) {
+        if (img.src.toLowerCase().includes(INVERT_SRC_TAG[i])) {
             return true;
         }
     }
@@ -174,7 +187,7 @@ function elementIsKeyboardKey(e) {
 }
 
 function elementIsLegendOrPieCharts(e) {
-    if (e.className.toLowerCase().includes('legend') ||
+    return e.className.toLowerCase().includes('legend') ||
         e.style.borderColor.toLowerCase().includes('transparent') ||
         (
             // Pie chart template
@@ -188,12 +201,7 @@ function elementIsLegendOrPieCharts(e) {
         ) ||
         (
             e.nodeName === "SPAN" && e.textContent.replace(/\s/g, '').length === 0
-        )
-    ) {
-        return true;
-    } else {
-        return false;
-    }
+        ) || e.innerHTML === "&nbsp;";
 }
 
 function changeForegroundColor(e) {
@@ -201,10 +209,10 @@ function changeForegroundColor(e) {
     if (colorIsRGB(foregroundColor)) {
         foregroundColor = splitToRGB(foregroundColor);
         foregroundColor = inverseRBGColor(foregroundColor);
-        foregroundColor = increaseRGBToMatchContrastValue(foregroundColor, default_backgroundColorRGB, default_contrastValue, 30);
+        foregroundColor = increaseRGBToMatchContrastValue(foregroundColor, DEFAULT_BACKGROUND_COLOR_RGB, DEFAULT_CONTRAST_VALUE, 30);
         e.style.color = RGBArrayToString(foregroundColor);
     } else {
-        e.style.color = default_foregroundColor;
+        e.style.color = DEFAULT_FOREGROUND_COLOR;
     }
 }
 
@@ -217,14 +225,14 @@ function changeBackgroundColor(e) {
         if (RGBTooDark(backgroundColor)) {
             backgroundColor = addValueToRGB(backgroundColor, 30);
         }
-        backgroundColor = decreaseRGBToMatchContrastValue(backgroundColor, default_backgroundColorRGB, default_contrastValue, -30);
+        backgroundColor = decreaseRGBToMatchContrastValue(backgroundColor, DEFAULT_BACKGROUND_COLOR_RGB, DEFAULT_CONTRAST_VALUE, -30);
         e.style.backgroundColor = RGBArrayToString(backgroundColor);
     } else if (backgroundColor !== "rgba(0, 0, 0, 0)" || elementToChangeBackground(e)) {
-        e.style.backgroundColor = default_backgroundColor;
+        e.style.backgroundColor = DEFAULT_BACKGROUND_COLOR;
     }
     const backgroundImage = elementComputedStyle.getPropertyValue("background-image");
     if (backgroundImageToRemove(backgroundImage)) {
-        e.style.background = default_backgroundColor;
+        e.style.background = DEFAULT_BACKGROUND_COLOR;
     }
 }
 
@@ -283,8 +291,8 @@ function addValueToRGB(rgb, value) {
 }
 
 function RGBTooDark(rgb) {
-    if (Number(rgb[0]) < Number(default_backgroundColorRGB[0]) - 10 && Number(rgb[1]) < Number(default_backgroundColorRGB[1]) - 10 &&
-        Number(rgb[2]) < Number(default_backgroundColorRGB[2]) - 10) {
+    if (Number(rgb[0]) < Number(DEFAULT_BACKGROUND_COLOR_RGB[0]) - 10 && Number(rgb[1]) < Number(DEFAULT_BACKGROUND_COLOR_RGB[1]) - 10 &&
+        Number(rgb[2]) < Number(DEFAULT_BACKGROUND_COLOR_RGB[2]) - 10) {
         return true;
     }
 }
@@ -296,15 +304,15 @@ function RGBArrayToString(rgb) {
 function invertChineseConversionBox() {
     let sheet = window.document.styleSheets[0];
     sheet.insertRule('.vectorTabs li { background-image: none; }', sheet.cssRules.length);
-    sheet.insertRule('.vectorTabs li a span { background: ' + default_backgroundColor + ' !important; }', sheet.cssRules.length);
-    sheet.insertRule('.vectorTabs li a span { color: ' + default_foregroundColor + ' !important; }', sheet.cssRules.length);
+    sheet.insertRule('.vectorTabs li a span { background: ' + DEFAULT_BACKGROUND_COLOR + ' !important; }', sheet.cssRules.length);
+    sheet.insertRule('.vectorTabs li a span { color: ' + DEFAULT_FOREGROUND_COLOR + ' !important; }', sheet.cssRules.length);
 }
 
 function elementToChangeBackground(e) {
     return e.id.toLowerCase().includes("mw-head") || e.parentElement.id.includes("ca-");
 }
 
-//##################___Toggle_Link___#######################################
+//############################################___Toggle_Script_Button___################################################
 
 function addToggleScriptElement() {
     const loginLinkElement = document.getElementById("pt-login");
@@ -328,7 +336,7 @@ function addToggleScriptElement() {
 }
 
 function updateToggleScriptElement() {
-    switch (locale) {
+    switch (LOCALE) {
         case "zh":
             if (GM_getValue("scriptEnabled")) {
                 setToggleScriptElement("关闭黑色主题", "单击来关闭维基百科黑色主题。", "white");
