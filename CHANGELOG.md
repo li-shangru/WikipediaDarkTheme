@@ -1,6 +1,24 @@
 # Wikipedia Dark Theme Changelog
 
-## [1.21](https://github.com/MaxsLi/WikipediaDarkTheme/commit/d650db119f6f9c38c0936125656f56b070d4b6bc) (2021-02-12)
+## [1.22](https://github.com/MaxsLi/WikipediaDarkTheme/commit/f488ca4cbd9b5c82f1407d9bd690ac1c4eb16bfe) (2021-02-13)
+
+* Wikipedia Dark Theme now supports the following additional pages:
+  * MediaWiki
+  * Meta-Wiki
+  * Wikispecies
+  * Wikibooks
+  * Wikidata
+  * Wikimania
+  * Wikinews
+  * Wikiquote
+  * Wikisource
+  * Wikiversity
+  * Wikivoyage
+  * Wiktionary
+* Variable renaming and comments improvement
+* Added more items to `EXCLUDE_SRC_TAG`
+
+## [1.21](https://github.com/MaxsLi/WikipediaDarkTheme/commit/d650db119f6f9c38c0936125656f56b070d4b6bc) (2021-02-13)
 
 * Hotfix on `exclude_src_tag` items for sports team jersey display
 
@@ -100,6 +118,7 @@
 
 * Optimize images display
 * Added a check that specific images will be inverted for better display result
+* Wikipedia Dark Theme were published on [Greasy Fork](https://greasyfork.org/en/scripts/382833-wikipedia-dark-theme)
 
 ## [0.82](https://github.com/MaxsLi/WikipediaDarkTheme/commit/7be7d0adf09609b97bbf71ec5c461bd84644f06d) (2019-04-19)
 
