@@ -10,8 +10,8 @@
 // @run-at       document-start
 // @license      MIT
 //###############---localizations---##################
-// @name:en             Wikipedia Dark Theme
-// @description:en      Script gives Wikipedia pages a dark color theme
+// @name             Wikipedia Dark Theme
+// @description      Script gives Wikipedia pages a dark color theme
 // @name:ja             Wikipediaダークテーマ
 // @description:ja      Wikipediaのサイトのバックグラウンドを黒に変更するスクリプトです
 // @name:zh-CN          维基百科黑色主题
