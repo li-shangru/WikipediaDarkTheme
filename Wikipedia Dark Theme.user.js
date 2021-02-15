@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Wikipedia Dark Theme
 // @author       Shangru Li
-// @version      1.22
+// @version      1.23
 // @match        *://*.wikipedia.org/*
 // @match        *://*.mediawiki.org/*
 // @match        *://*.wikimedia.org/*
@@ -40,7 +40,7 @@ const DEFAULT_BACKGROUND_COLOR = "rgb(35, 35, 35)";
 
 //############################################___Global_Variables___####################################################
 
-const LOCALE = window.location.href.substring(0, window.location.href.indexOf(".wikipedia")).slice(-2);
+const LOCALE = window.location.href.substring(0, window.location.href.indexOf(".wiki")).slice(-2);
 
 const DEFAULT_BACKGROUND_COLOR_RGB = splitToRGB(DEFAULT_BACKGROUND_COLOR);
 

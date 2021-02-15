@@ -23,7 +23,7 @@ To install:
 
 * An install page should pop up automatically.
 
-* Click the `Enable Dark Theme` option in the top right corner.
+* Click the `Enable Dark Theme` option in the top right corner while browsing any Wiki pages.
 
 ## Supported Pages
 
