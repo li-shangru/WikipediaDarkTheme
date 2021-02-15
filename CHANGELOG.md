@@ -1,5 +1,9 @@
 # Wikipedia Dark Theme Changelog
 
+## [1.23](https://github.com/MaxsLi/WikipediaDarkTheme/commit/47179528bf59ceb1cf1a2232baa95ed7e90fc4be) (2021-02-15)
+
+* Small bug fix on locale detection
+
 ## [1.22](https://github.com/MaxsLi/WikipediaDarkTheme/commit/f488ca4cbd9b5c82f1407d9bd690ac1c4eb16bfe) (2021-02-13)
 
 * Wikipedia Dark Theme now supports the following additional pages:
