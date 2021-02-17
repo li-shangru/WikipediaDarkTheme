@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Wikipedia Dark Theme
 // @author       Shangru Li
-// @version      1.23
+// @version      1.24
 // @match        *://*.wikipedia.org/*
 // @match        *://*.mediawiki.org/*
 // @match        *://*.wikimedia.org/*
@@ -71,14 +71,35 @@ const EXCLUDE_SRC_TAG = [
     "px-cscr-former", "px-red_x", "px-crystal_clear_app_kedit", "px-people_icon",
     "kit_shorts", "kit_socks", "wikipedia-logo", "phacility_phabricator_logo",
     "wikimedia_cloud_services_logo", "lingualibre-logo", "le_dico_des_ados_small_logo",
-    "vikidia_v_vectorised"
+    "vikidia_v_vectorised", "sciences_humaines", "science-symbol", "history2",
+    "vote3_final", "p_religion_world", "tecno-rueda", "notification-icon",
+    "countries-vector", "p_history", "social_sciences", "p_culture", "p_religion_world",
+    "p_sport", "p_train", "p_parthenon", "wiktionary_small", "wikimedia-logo",
+    "crystal_clear_app_xmag", "1rightarrow", "emblem-qual", "hswikimedia", "hsutvald",
+    "hstools", "hscontribs", "pl_wiki_czywiesz_ikona", "hs_geo", "p_wwii", "p_literature",
+    "p_science", "p_globe", "p_vip", "p_mathematics", "p_chemistry", "p_medicine3",
+    "p_technology", "datum17", "hs_liste", "hs_rtl_exclamation", "hsbook", "hshome",
+    "hs_korganizer", "hseditor", "84_tematyczny_logo_propozycja", "hsbra",
+    "pl_wiki_kalendarium_ikona", "pl_wiki_inm_ikona", "wiktionarypl_nodesc",
+    "wikimedia_polska_logo", "icon_of_three_people_in_different_shades_of_grey",
+    "wikimania", "hs_skand", "emblem-star-gray", "help-browser-red", "globe-with-clock",
+    "records", "office-calendar", "preferences-desktop-locale", "system-users",
+    "applications-system", "emblem-earth", "mail-closed"
 ];
 
 // list of tags of images to have color inverted, both lists are subjected to amend
 const INVERT_SRC_TAG = [
     "loudspeaker", "signature", "signatur", "chinese_characters", "/media/math/render/",
     "translation_to_english_arrow", "disambig_gray", "wikimedia-logo_black", "blue_pencil",
-    "latin_alphabet_", "_cursiva", "unbalanced_scales", "question%2c_web_fundamentals"
+    "latin_alphabet_", "_cursiva", "unbalanced_scales", "question%2c_web_fundamentals",
+    "wikipedia-tagline", "wikipedia-wordmark", "copyright/wikipedia", "ui_icon_ellipsis",
+    "bluebg_rounded_croped", "blue-bg_rounded_cropped_right", "icon_facebook",
+    "youtube_social_dark_circle", "instagram_circle", "icon_twitter",
+    "%d8%a8%d8%a7%d9%84%d8%ad%d9%84%d9%8a%d8%a9", "font_awesome_5_solid_feather-alt",
+    "font_awesome_5_solid_tree", "font_awesome_5_solid_globe", "font_awesome_5_solid_futbol",
+    "font_awesome_5_solid_hourglass", "font_awesome_5_solid_users", "font_awesome_5_solid_palette",
+    "font_awesome_5_solid_rocket", "font_awesome_5_solid_bong", "vlad1Trezub", "font_awesome_5_solid_flag",
+    "font_awesome_5_solid_university", "wikipedia_wordmark"
 ];
 
 //############################################___Controller___##########################################################
@@ -95,9 +116,7 @@ const INVERT_SRC_TAG = [
         } else if ('complete' === document.readyState) {
             setPageVisibility("visible");
             addToggleScriptElement();
-            if (LOCALE === "zh") {
-                invertChineseConversionBox();
-            }
+            invertSpecialElements();
         }
     } else {
         addToggleScriptElement();
@@ -301,15 +320,44 @@ function RGBArrayToString(rgb) {
     return 'rgb(' + rgb[0] + ', ' + rgb[1] + ', ' + rgb[2] + ')';
 }
 
-function invertChineseConversionBox() {
-    let sheet = window.document.styleSheets[0];
-    sheet.insertRule('.vectorTabs li { background-image: none; }', sheet.cssRules.length);
-    sheet.insertRule('.vectorTabs li a span { background: ' + DEFAULT_BACKGROUND_COLOR + ' !important; }', sheet.cssRules.length);
-    sheet.insertRule('.vectorTabs li a span { color: ' + DEFAULT_FOREGROUND_COLOR + ' !important; }', sheet.cssRules.length);
-}
-
 function elementToChangeBackground(e) {
     return e.id.toLowerCase().includes("mw-head") || e.parentElement.id.includes("ca-");
+}
+
+function invertSpecialElements() {
+    let sheet = window.document.styleSheets[0];
+    if (LOCALE === "zh") {
+        // Chinese conversion box
+        sheet.insertRule('.vectorTabs li { background-image: none; }', sheet.cssRules.length);
+        sheet.insertRule('.vectorTabs li a span { background: ' + DEFAULT_BACKGROUND_COLOR + ' !important; }', sheet.cssRules.length);
+        sheet.insertRule('.vectorTabs li a span { color: ' + DEFAULT_FOREGROUND_COLOR + ' !important; }', sheet.cssRules.length);
+        // Chinese main page
+        sheet.insertRule('@media (min-width: 720px) { .mw-parser-output #mp-2012-column-right-block-b { background: ' + DEFAULT_BACKGROUND_COLOR + ' !important; } }', sheet.cssRules.length);
+    } else if (LOCALE === "fr") {
+        // French Main page and side bar
+        sheet.insertRule('#accueil_2017_en-tete { background: ' + DEFAULT_BACKGROUND_COLOR + ' !important; }', sheet.cssRules.length);
+        sheet.insertRule('#mw-panel { background: ' + DEFAULT_BACKGROUND_COLOR + ' !important; }', sheet.cssRules.length);
+    } else if (LOCALE === "ja") {
+        // Japanese main page headings
+        sheet.insertRule('.mw-parser-output .mainpage-heading-title { background: linear-gradient(to right,rgb(74,51,25),rgba(173,171,170,0)) !important; }', sheet.cssRules.length);
+    } else if (LOCALE === "pl") {
+        // Polish main page headings
+        sheet.insertRule('h2 { background-image: none !important; background: linear-gradient(to right,rgb(74,51,25),rgba(173,171,170,0)) !important; }', sheet.cssRules.length);
+    } else if (LOCALE === "ru") {
+        // Russian main page
+        sheet.insertRule('@media (min-width: 1000px) { .main-top-left { background-image: linear-gradient(to right, #070605 0%,#070605 70%, rgba(7,6,5,0)100%) !important; } }', sheet.cssRules.length);
+    } else if (LOCALE === "sv") {
+        // Swedish main page headings
+        sheet.insertRule('.mw-parser-output .frontPageBlock { background: none !important; }', sheet.cssRules.length);
+        sheet.insertRule('.frontPageBlockTitle { background: linear-gradient(to right,rgb(74,51,25),rgba(173,171,170,0)) !important; }', sheet.cssRules.length);
+    } else if (LOCALE === "uk") {
+        // Ukrainian main page
+        sheet.insertRule('.mw-parser-output #main-head { background: linear-gradient(rgb(30,30,30),' + DEFAULT_BACKGROUND_COLOR + ' ) !important; }', sheet.cssRules.length);
+        sheet.insertRule('.mw-parser-output #main-bottom { background: linear-gradient(' + DEFAULT_BACKGROUND_COLOR + ', rgb(30,30,30)) !important; }', sheet.cssRules.length);
+    } else if (LOCALE === "ko") {
+        // Korean main page
+        sheet.insertRule('.mw-parser-output .main-top-left { background-image: linear-gradient(to right, #070605 0%,#070605 70%, rgba(7,6,5,0)100%) !important; }', sheet.cssRules.length);
+    }
 }
 
 //############################################___Toggle_Script_Button___################################################
@@ -350,6 +398,13 @@ function updateToggleScriptElement() {
             } else {
                 setToggleScriptElement("ダークテーマを設定する", "ここをクリックしてダークテーマに切り替わる。", "black");
             }
+            break;
+        case "fr":
+            if (GM_getValue("scriptEnabled")) {
+                setToggleScriptElement("Fermer le thème noir", "Cliquer pour fermer le thème noir.", "white");
+            } else {
+                setToggleScriptElement("Ouvrir le thème noir", "Cliquer pour ouvrir le thème noir.", "black");
+                }
             break;
         default:
             if (GM_getValue("scriptEnabled")) {
