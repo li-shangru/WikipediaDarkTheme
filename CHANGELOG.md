@@ -1,5 +1,27 @@
 # Wikipedia Dark Theme Changelog
 
+## [1.24](https://github.com/MaxsLi/WikipediaDarkTheme/commit/bbd3373e21125b3b229da5e8785c274408349f45) (2021-02-17)
+
+* Added French translation for toggle script button
+* Optimized the main pages of the following languages:
+  * العربية
+  * Deutsch
+  * Español
+  * Français
+  * Italiano
+  * Nederlands
+  * 日本語
+  * Polski
+  * Português
+  * Русский
+  * Svenska
+  * Українська
+  * Tiếng Việt
+  * 中文
+  * 한국어
+* Added more items to `EXCLUDE_SRC_TAG` and `INVERT_SRC_TAG`
+* Updated screenshots
+
 ## [1.23](https://github.com/MaxsLi/WikipediaDarkTheme/commit/47179528bf59ceb1cf1a2232baa95ed7e90fc4be) (2021-02-15)
 
 * Small bug fix on locale detection
