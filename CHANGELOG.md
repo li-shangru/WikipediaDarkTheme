@@ -1,5 +1,9 @@
 # Wikipedia Dark Theme Changelog
 
+## [1.25](https://github.com/MaxsLi/WikipediaDarkTheme/commit/ab1952f240969b1d06bfd05dadd73b5558901ca6) (2021-02-18)
+
+* Fixed appearance for Español main page.
+
 ## [1.24](https://github.com/MaxsLi/WikipediaDarkTheme/commit/bbd3373e21125b3b229da5e8785c274408349f45) (2021-02-17)
 
 * Added French translation for toggle script button
