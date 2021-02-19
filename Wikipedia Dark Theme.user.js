@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Wikipedia Dark Theme
 // @author       Shangru Li
-// @version      1.24
+// @version      1.25
 // @match        *://*.wikipedia.org/*
 // @match        *://*.mediawiki.org/*
 // @match        *://*.wikimedia.org/*
@@ -340,6 +340,9 @@ function invertSpecialElements() {
     } else if (LOCALE === "ja") {
         // Japanese main page headings
         sheet.insertRule('.mw-parser-output .mainpage-heading-title { background: linear-gradient(to right,rgb(74,51,25),rgba(173,171,170,0)) !important; }', sheet.cssRules.length);
+    } else if (LOCALE === "es") {
+        // Spanish main page headings
+        sheet.insertRule('@media (min-width: 1000px) { .mw-parser-output .main-top-left { background-image: linear-gradient(to right, #070605 0%,#070605 70%, rgba(7,6,5,0)100%) !important; } }', sheet.cssRules.length);
     } else if (LOCALE === "pl") {
         // Polish main page headings
         sheet.insertRule('h2 { background-image: none !important; background: linear-gradient(to right,rgb(74,51,25),rgba(173,171,170,0)) !important; }', sheet.cssRules.length);
