@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Wikipedia Dark Theme
 // @author       Shangru Li
-// @version      1.25
+// @version      1.26
 // @match        *://*.wikipedia.org/*
 // @match        *://*.mediawiki.org/*
 // @match        *://*.wikimedia.org/*
@@ -115,11 +115,11 @@ const INVERT_SRC_TAG = [
             applyDarkTheme();
         } else if ('complete' === document.readyState) {
             setPageVisibility("visible");
-            addToggleScriptElement();
+            addToggleScriptButton();
             invertSpecialElements();
         }
     } else {
-        addToggleScriptElement();
+        addToggleScriptButton();
     }
 })();
 
@@ -365,12 +365,8 @@ function invertSpecialElements() {
 
 //############################################___Toggle_Script_Button___################################################
 
-function addToggleScriptElement() {
-    const loginLinkElement = document.getElementById("pt-login");
-    const logoutLinkElement = document.getElementById("pt-logout");
-    // Two cases: user logged-in or not logged-in
-    // Get the parent of either element that is defined
-    const parentList = (loginLinkElement) ? (loginLinkElement.parentElement) : (logoutLinkElement.parentElement);
+function addToggleScriptButton() {
+    // Create a list that contains toggle script button
     let toggleScriptList = document.createElement('li');
     let toggleScriptElement = document.createElement('a');
     toggleScriptElement.id = "toggleScriptElement";
@@ -382,43 +378,50 @@ function addToggleScriptElement() {
         return false;
     };
     toggleScriptList.appendChild(toggleScriptElement);
+    // Getting the login button and logout button
+    const loginLinkElement = document.getElementById("pt-login");
+    const logoutLinkElement = document.getElementById("pt-logout");
+    // Two cases: user logged-in or not logged-in
+    // Get the parent of either element that is defined
+    let parentList = (loginLinkElement) ? (loginLinkElement.parentElement) : (logoutLinkElement.parentElement);
+    // Adding toggle script button to after the login/logout button
     parentList.appendChild(toggleScriptList);
-    updateToggleScriptElement();
+    updateToggleScriptButton();
 }
 
-function updateToggleScriptElement() {
+function updateToggleScriptButton() {
     switch (LOCALE) {
         case "zh":
             if (GM_getValue("scriptEnabled")) {
-                setToggleScriptElement("关闭黑色主题", "单击来关闭维基百科黑色主题。", "white");
+                setToggleScriptButton("关闭黑色主题", "单击来关闭维基百科黑色主题。", "white");
             } else {
-                setToggleScriptElement("开启黑色主题", "单击来开启维基百科黑色主题。", "black");
+                setToggleScriptButton("开启黑色主题", "单击来开启维基百科黑色主题。", "black");
             }
             break;
         case "ja":
             if (GM_getValue("scriptEnabled")) {
-                setToggleScriptElement("ダークテーマを解除する", "ここをクリックしてダークテーマから切り替わる。", "white");
+                setToggleScriptButton("ダークテーマを解除する", "ここをクリックしてダークテーマから切り替わる。", "white");
             } else {
-                setToggleScriptElement("ダークテーマを設定する", "ここをクリックしてダークテーマに切り替わる。", "black");
+                setToggleScriptButton("ダークテーマを設定する", "ここをクリックしてダークテーマに切り替わる。", "black");
             }
             break;
         case "fr":
             if (GM_getValue("scriptEnabled")) {
-                setToggleScriptElement("Fermer le thème noir", "Cliquer pour fermer le thème noir.", "white");
+                setToggleScriptButton("Fermer le thème noir", "Cliquer pour fermer le thème noir.", "white");
             } else {
-                setToggleScriptElement("Ouvrir le thème noir", "Cliquer pour ouvrir le thème noir.", "black");
+                setToggleScriptButton("Ouvrir le thème noir", "Cliquer pour ouvrir le thème noir.", "black");
                 }
             break;
         default:
             if (GM_getValue("scriptEnabled")) {
-                setToggleScriptElement("Disable Dark Theme", "Click to disable Wikipedia Dark Theme.", "white");
+                setToggleScriptButton("Disable Dark Theme", "Click to disable Wikipedia Dark Theme.", "white");
             } else {
-                setToggleScriptElement("Enable Dark Theme", "Click to enable Wikipedia Dark Theme.", "black");
+                setToggleScriptButton("Enable Dark Theme", "Click to enable Wikipedia Dark Theme.", "black");
             }
     }
 }
 
-function setToggleScriptElement(text, title, color) {
+function setToggleScriptButton(text, title, color) {
     const toggleScriptElement = document.getElementById("toggleScriptElement");
     toggleScriptElement.text = text;
     toggleScriptElement.title = title;
