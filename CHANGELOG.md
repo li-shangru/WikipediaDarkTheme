@@ -1,5 +1,9 @@
 # Wikipedia Dark Theme Changelog
 
+## [1.27](https://github.com/MaxsLi/WikipediaDarkTheme/commit/febec449134b1e06dec1e842424fb394710b2ff4) (2021-03-08)
+
+* Optimized family trees appearances, [example page](https://en.wikipedia.org/wiki/Family_tree_of_English_monarchs)
+
 ## [1.26](https://github.com/MaxsLi/WikipediaDarkTheme/commit/297cc9afffcfce6a66e676831a73db9df51ce789) (2021-03-07)
 
 * Minor function renaming
