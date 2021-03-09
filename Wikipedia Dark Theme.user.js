@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Wikipedia Dark Theme
 // @author       Shangru Li
-// @version      1.26
+// @version      1.27
 // @match        *://*.wikipedia.org/*
 // @match        *://*.mediawiki.org/*
 // @match        *://*.wikimedia.org/*
@@ -159,7 +159,23 @@ function isSpecialElement(e) {
     } else if (elementIsKeyboardKey(e)) {
         e.style.foregroundColor = DEFAULT_BACKGROUND_COLOR;
         return true;
-    } else return !!elementIsLegendOrPieCharts(e);
+    } else if (elementIsFamilyTree(e)) {
+        if (e.style.borderTop) {
+            e.style.borderTopColor = "white";
+        }
+        if (e.style.borderBottom) {
+            e.style.borderBottomColor = "white";
+        }
+        if (e.style.borderLeft) {
+            e.style.borderLeftColor = "white";
+        }
+        if (e.style.borderRight) {
+            e.style.borderRightColor = "white";
+        }
+        if (e.style.border) {
+            e.style.borderColor = "white";
+        }
+    } else return !!elementIsLegendOrPieChart(e);
 }
 
 function elementIsImage(e) {
@@ -205,7 +221,7 @@ function elementIsKeyboardKey(e) {
     return e.className.toLowerCase().includes('keyboard-key');
 }
 
-function elementIsLegendOrPieCharts(e) {
+function elementIsLegendOrPieChart(e) {
     return e.className.toLowerCase().includes('legend') ||
         e.style.borderColor.toLowerCase().includes('transparent') ||
         (
@@ -221,6 +237,22 @@ function elementIsLegendOrPieCharts(e) {
         (
             e.nodeName === "SPAN" && e.textContent.replace(/\s/g, '').length === 0
         ) || e.innerHTML === "&nbsp;";
+}
+
+function elementIsFamilyTree(e) {
+    return e.style.borderTop.toLowerCase().includes("1px solid black") ||
+        e.style.borderTop.toLowerCase().includes("1px dashed black") ||
+        e.style.borderTop.toLowerCase().includes("1px dotted black") ||
+        e.style.borderBottom.toLowerCase().includes("1px solid black") ||
+        e.style.borderBottom.toLowerCase().includes("1px dashed black") ||
+        e.style.borderBottom.toLowerCase().includes("1px dotted black") ||
+        e.style.borderLeft.toLowerCase().includes("1px solid black") ||
+        e.style.borderLeft.toLowerCase().includes("1px dashed black") ||
+        e.style.borderLeft.toLowerCase().includes("1px dotted black") ||
+        e.style.borderRight.toLowerCase().includes("1px solid black") ||
+        e.style.borderRight.toLowerCase().includes("1px dashed black") ||
+        e.style.borderRight.toLowerCase().includes("1px dotted black") ||
+        e.style.border.toLowerCase().includes("2px solid black");
 }
 
 function changeForegroundColor(e) {
@@ -410,7 +442,7 @@ function updateToggleScriptButton() {
                 setToggleScriptButton("Fermer le thème noir", "Cliquer pour fermer le thème noir.", "white");
             } else {
                 setToggleScriptButton("Ouvrir le thème noir", "Cliquer pour ouvrir le thème noir.", "black");
-                }
+            }
             break;
         default:
             if (GM_getValue("scriptEnabled")) {
