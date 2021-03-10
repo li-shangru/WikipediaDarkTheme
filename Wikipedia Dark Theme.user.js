@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Wikipedia Dark Theme
 // @author       Shangru Li
-// @version      1.27
+// @version      1.28
 // @match        *://*.wikipedia.org/*
 // @match        *://*.mediawiki.org/*
 // @match        *://*.wikimedia.org/*
@@ -84,7 +84,8 @@ const EXCLUDE_SRC_TAG = [
     "wikimedia_polska_logo", "icon_of_three_people_in_different_shades_of_grey",
     "wikimania", "hs_skand", "emblem-star-gray", "help-browser-red", "globe-with-clock",
     "records", "office-calendar", "preferences-desktop-locale", "system-users",
-    "applications-system", "emblem-earth", "mail-closed"
+    "applications-system", "emblem-earth", "mail-closed", "tango-nosources",
+    "emblem-scales"
 ];
 
 // list of tags of images to have color inverted, both lists are subjected to amend
@@ -175,7 +176,8 @@ function isSpecialElement(e) {
         if (e.style.border) {
             e.style.borderColor = "white";
         }
-    } else return !!elementIsLegendOrPieChart(e);
+        return true;
+    } else return (elementIsLegendOrPieChart(e) || elementIsIndicationArrow(e));
 }
 
 function elementIsImage(e) {
@@ -253,6 +255,10 @@ function elementIsFamilyTree(e) {
         e.style.borderRight.toLowerCase().includes("1px dashed black") ||
         e.style.borderRight.toLowerCase().includes("1px dotted black") ||
         e.style.border.toLowerCase().includes("2px solid black");
+}
+
+function elementIsIndicationArrow(e) {
+    return e.innerHTML === "▼" || e.innerHTML === "▲";
 }
 
 function changeForegroundColor(e) {
