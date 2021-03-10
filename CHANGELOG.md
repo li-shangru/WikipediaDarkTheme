@@ -1,5 +1,11 @@
 # Wikipedia Dark Theme Changelog
 
+## [1.28](https://github.com/MaxsLi/WikipediaDarkTheme/commit/030b4a40fbe04e75f08d2539c6d438fad7054609) (2021-03-09)
+
+* Added up/down arrow detection
+* Bug fix on legend color
+* Added more items to `EXCLUDE_SRC_TAG`
+
 ## [1.27](https://github.com/MaxsLi/WikipediaDarkTheme/commit/febec449134b1e06dec1e842424fb394710b2ff4) (2021-03-08)
 
 * Optimized family trees appearances, [example page](https://en.wikipedia.org/wiki/Family_tree_of_English_monarchs)
