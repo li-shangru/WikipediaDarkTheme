@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Wikipedia Dark Theme
 // @author       Shangru Li
-// @version      1.28
+// @version      1.29
 // @match        *://*.wikipedia.org/*
 // @match        *://*.mediawiki.org/*
 // @match        *://*.wikimedia.org/*
@@ -238,7 +238,7 @@ function elementIsLegendOrPieChart(e) {
         ) ||
         (
             e.nodeName === "SPAN" && e.textContent.replace(/\s/g, '').length === 0
-        ) || e.innerHTML === "&nbsp;";
+        ) || e.innerHTML === "&nbsp;" || e.innerHTML === "​" || e.innerHTML === "■";
 }
 
 function elementIsFamilyTree(e) {
