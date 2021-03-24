@@ -1,5 +1,9 @@
 # Wikipedia Dark Theme Changelog
 
+## [1.29](https://github.com/MaxsLi/WikipediaDarkTheme/commit/cd20efeacc4afdc7e80dce3c87d86ed826b32e53) (2021-03-24)
+
+* Improvements on legend detection
+
 ## [1.28](https://github.com/MaxsLi/WikipediaDarkTheme/commit/030b4a40fbe04e75f08d2539c6d438fad7054609) (2021-03-09)
 
 * Added up/down arrow detection
