@@ -1,5 +1,9 @@
 # Wikipedia Dark Theme Changelog
 
+## [1.30](https://github.com/MaxsLi/WikipediaDarkTheme/commit/31a4d593c449ec7f76fac343b98a5f7f5016e1c3) (2021-03-29)
+
+* Minor performance improvement
+
 ## [1.29](https://github.com/MaxsLi/WikipediaDarkTheme/commit/cd20efeacc4afdc7e80dce3c87d86ed826b32e53) (2021-03-24)
 
 * Improvements on legend detection
