@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Wikipedia Dark Theme
 // @author       Shangru Li
-// @version      1.29
+// @version      1.30
 // @match        *://*.wikipedia.org/*
 // @match        *://*.mediawiki.org/*
 // @match        *://*.wikimedia.org/*
@@ -119,7 +119,7 @@ const INVERT_SRC_TAG = [
             addToggleScriptButton();
             invertSpecialElements();
         }
-    } else {
+    } else if ('complete' === document.readyState) {
         addToggleScriptButton();
     }
 })();
@@ -136,18 +136,16 @@ function applyDarkTheme() {
     // General idea is to put all elements on a wikipedia page to an array `allElements`
     // traverse through this array and reverse the color of each element accordingly
     // running time o(n), where n is the number of elements on a page
-    const allElements = document.querySelectorAll('*');
-    for (let i = 0; i < allElements.length; i++) {
-        let currentElement = allElements[i];
-        try {
-            if (!isSpecialElement(currentElement)) {
-                changeForegroundColor(currentElement);
-                changeBackgroundColor(currentElement);
+    document.querySelectorAll('*').forEach(function(element) {
+    	try {
+            if (!isSpecialElement(element)) {
+                changeForegroundColor(element);
+                changeBackgroundColor(element);
             }
         } catch (e) {
             console.log(e);
         }
-    }
+    });
 }
 
 function isSpecialElement(e) {
