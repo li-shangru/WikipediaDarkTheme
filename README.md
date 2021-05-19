@@ -1,5 +1,7 @@
 # Wikipedia Dark Theme
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/2d2162563345453a883c09bfb258174c)](https://app.codacy.com/gh/MaxsLi/WikipediaDarkTheme?utm_source=github.com&utm_medium=referral&utm_content=MaxsLi/WikipediaDarkTheme&utm_campaign=Badge_Grade_Settings)
+
 ## Introduction
 
 Wikipedia Dark Theme is a script to give Wikipedia pages a dark color theme.
