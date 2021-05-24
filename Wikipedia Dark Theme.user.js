@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Wikipedia Dark Theme
 // @author       Shangru Li
-// @version      1.30
+// @version      1.31
 // @match        *://*.wikipedia.org/*
 // @match        *://*.mediawiki.org/*
 // @match        *://*.wikimedia.org/*
@@ -85,7 +85,7 @@ const EXCLUDE_SRC_TAG = [
     "wikimania", "hs_skand", "emblem-star-gray", "help-browser-red", "globe-with-clock",
     "records", "office-calendar", "preferences-desktop-locale", "system-users",
     "applications-system", "emblem-earth", "mail-closed", "tango-nosources",
-    "emblem-scales"
+    "emblem-scales", "MediaWiki-2020"
 ];
 
 // list of tags of images to have color inverted, both lists are subjected to amend

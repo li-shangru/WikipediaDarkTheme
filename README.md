@@ -1,4 +1,4 @@
-# Wikipedia Dark Theme
+# [Wikipedia Dark Theme](https://greasyfork.org/en/scripts/382833-wikipedia-dark-theme)
 
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/960da3a5c8a44ccb9e35fcca45e5a88b)](https://www.codacy.com/gh/MaxsLi/WikipediaDarkTheme/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=MaxsLi/WikipediaDarkTheme&amp;utm_campaign=Badge_Grade)
 [![CodeQL](https://github.com/MaxsLi/WikipediaDarkTheme/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/MaxsLi/WikipediaDarkTheme/actions/workflows/codeql-analysis.yml)
