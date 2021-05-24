@@ -1,5 +1,9 @@
 # Wikipedia Dark Theme Changelog
 
+## [1.31](https://github.com/MaxsLi/WikipediaDarkTheme/commit/04d152d0fbc8a53b93da45a1d0952af1067eba7d) (2021-05-24)
+
+* Added more items to `EXCLUDE_SRC_TAG`
+
 ## [1.30](https://github.com/MaxsLi/WikipediaDarkTheme/commit/31a4d593c449ec7f76fac343b98a5f7f5016e1c3) (2021-03-29)
 
 * Minor performance improvement
