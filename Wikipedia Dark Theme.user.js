@@ -85,7 +85,7 @@ const EXCLUDE_SRC_TAG = [
     "wikimania", "hs_skand", "emblem-star-gray", "help-browser-red", "globe-with-clock",
     "records", "office-calendar", "preferences-desktop-locale", "system-users",
     "applications-system", "emblem-earth", "mail-closed", "tango-nosources",
-    "emblem-scales", "MediaWiki-2020"
+    "emblem-scales", "mediawiki-2020"
 ];
 
 // list of tags of images to have color inverted, both lists are subjected to amend
