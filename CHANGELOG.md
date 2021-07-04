@@ -1,5 +1,9 @@
 # Wikipedia Dark Theme Changelog
 
+## [1.41](https://github.com/MaxsLi/WikipediaDarkTheme/commit/8b60de0bc8cd7e3a5bcc5cee9bfadf35f9843bb3) (2021-07-04)
+
+* Fixed a bug where when user dismissed settings modal, settings not reverted
+
 ## [1.40](https://github.com/MaxsLi/WikipediaDarkTheme/commit/b55d757c33d49420d71e21d84eaf8e1e5315521c) (2021-07-04)
 
 * Due to overwhelming (2) requests, I have added a settings modal. Within, user can change the theme and color preferences
