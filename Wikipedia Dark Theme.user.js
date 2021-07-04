@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Wikipedia Dark Theme
 // @author       Shangru Li
-// @version      1.40
+// @version      1.41
 // @match        *://*.wikipedia.org/*
 // @match        *://*.mediawiki.org/*
 // @match        *://*.wikimedia.org/*
@@ -576,30 +576,34 @@ function updateColorPreferences() {
     document.getElementById("contrastValue").value = GM_getValue("contrastValue");
 }
 
+function dismissSettingsModal() {
+    const settingsModal = document.getElementById("settingsModal");
+    settingsModal.style.display = "none";
+    updateSettingsModal();
+}
+
 function addButtonListeners() {
     const closeButtons = document.getElementsByClassName("close");
     for (let i = 0; i < closeButtons.length; i++) {
         closeButtons[i].onclick = function () {
-            document.getElementById("settingsModal").style.display = "none";
+            dismissSettingsModal();
         }
     }
     window.onclick = function (event) {
-        const settingsModal = document.getElementById("settingsModal")
-        if (event.target === settingsModal) {
-            settingsModal.style.display = "none";
+        if (event.target === document.getElementById("settingsModal")) {
+            dismissSettingsModal();
         }
     }
     const saveButton = document.getElementById("saveButton");
     saveButton.onclick = function () {
         setSettings();
-        updateThemePreferences();
-        document.getElementById("settingsModal").style.display = "none";
+        dismissSettingsModal();
         location.reload();
     }
     const restoreButton = document.getElementById("restoreButton");
     restoreButton.onclick = function () {
         initGMStorage(true);
-        document.getElementById("settingsModal").style.display = "none";
+        dismissSettingsModal();
         location.reload();
     }
 }
