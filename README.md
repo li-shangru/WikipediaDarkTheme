@@ -28,7 +28,21 @@ To install:
 
 * An install page should pop up automatically.
 
-* Click the `Enable Dark Theme` option in the top right corner while browsing any Wiki pages.
+## Settings
+
+To open the Settings modal:
+
+* Click the `Settings` option in the top right corner while browsing any Wiki pages.
+
+Within, you can choose how Wikipedia pages look to you.
+
+Select a single light or dark theme, or sync with your system and automatically switch between light and dark themes.
+
+Moreover, you can choose your own link color and contrast value.
+
+Try to adjust these values and find the Wikipedia theme that looks best for you.
+
+If you change your mind, you can always go back to default settings by clicking the `Restore defaults` button.
 
 ## Supported Pages
 
@@ -50,6 +64,8 @@ Wikipedia Dark Theme supports the following pages:
 
 ## Screenshots
 
-| **Before**                                   | **After**                                        |
-| -------------------------------------------- | ------------------------------------------------ |
-| ![A Wikipedia page](/screenshots/dark_theme_disabled.png) | ![A dark Wikipedia page](/screenshots/dark_theme_enabled.png) |
+| **Light Theme**                                          | **Dark Theme**                                                                   |
+| :------------------------------------------------------: | :-------------------------------------------------------------------------: |
+| ![A Wikipedia page](/screenshots/dark_theme_disabled.png)| ![A dark Wikipedia page](/screenshots/dark_theme_enabled.png)               |
+| **Settings Menu**                                        | **Custom Link Color**                                                       |
+| ![Settings menu](/screenshots/settings_menu.png)         | ![Wikipedia page with custom link color](/screenshots/custom_link_color.png)|

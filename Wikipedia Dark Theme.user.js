@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Wikipedia Dark Theme
 // @author       Shangru Li
-// @version      1.32
+// @version      1.40
 // @match        *://*.wikipedia.org/*
 // @match        *://*.mediawiki.org/*
 // @match        *://*.wikimedia.org/*
@@ -36,6 +36,7 @@
 const DEFAULT_CONTRAST_VALUE = 8;
 const DEFAULT_FOREGROUND_COLOR = "rgb(238, 255, 255)";
 const DEFAULT_BACKGROUND_COLOR = "rgb(35, 35, 35)";
+const DEFAULT_LINK_COLOR = "rgb(249, 186, 82)";
 //############################################___One_Could_Alter_If_Desired___##########################################
 
 //############################################___Global_Variables___####################################################
@@ -69,7 +70,7 @@ const EXCLUDE_SRC_TAG = [
     "px-applications-graphics", "px-pody_candidate", "px-potd-logo", "px-pd-icon",
     "px-dialog-warning", "px-checked_copyright_icon", "px-valued_image_seal",
     "px-cscr-former", "px-red_x", "px-crystal_clear_app_kedit", "px-people_icon",
-    "kit_shorts", "kit_socks", "wikipedia-logo", "phacility_phabricator_logo",
+    "kit_shorts", "kit_socks", "wikipedia-logo-v2", "phacility_phabricator_logo",
     "wikimedia_cloud_services_logo", "lingualibre-logo", "le_dico_des_ados_small_logo",
     "vikidia_v_vectorised", "sciences_humaines", "science-symbol", "history2",
     "vote3_final", "p_religion_world", "tecno-rueda", "notification-icon",
@@ -100,7 +101,7 @@ const INVERT_SRC_TAG = [
     "font_awesome_5_solid_tree", "font_awesome_5_solid_globe", "font_awesome_5_solid_futbol",
     "font_awesome_5_solid_hourglass", "font_awesome_5_solid_users", "font_awesome_5_solid_palette",
     "font_awesome_5_solid_rocket", "font_awesome_5_solid_bong", "vlad1Trezub", "font_awesome_5_solid_flag",
-    "font_awesome_5_solid_university", "wikipedia_wordmark"
+    "font_awesome_5_solid_university", "wikipedia_wordmark", "wikipedia-logo-textonly"
 ];
 
 //############################################___Controller___##########################################################
@@ -116,11 +117,11 @@ const INVERT_SRC_TAG = [
             applyDarkTheme();
         } else if ('complete' === document.readyState) {
             setPageVisibility("visible");
-            addToggleScriptButton();
+            initSettingElements();
             invertSpecialElements();
         }
     } else if ('complete' === document.readyState) {
-        addToggleScriptButton();
+        initSettingElements();
     }
 })();
 
@@ -136,8 +137,8 @@ function applyDarkTheme() {
     // General idea is to put all elements on a wikipedia page to an array `allElements`
     // traverse through this array and reverse the color of each element accordingly
     // running time o(n), where n is the number of elements on a page
-    document.querySelectorAll('*').forEach(function(element) {
-    	try {
+    document.querySelectorAll('*').forEach(function (element) {
+        try {
             if (!isSpecialElement(element)) {
                 changeForegroundColor(element);
                 changeBackgroundColor(element);
@@ -149,11 +150,15 @@ function applyDarkTheme() {
 }
 
 function isSpecialElement(e) {
-    if (elementIsImage(e)) {
+    if (elementIsWikiLogo(e)) {
+        invertImage(e, 90);
+        return true;
+    } else if (elementIsImage(e)) {
         changeImageIfOnLists(e);
         return true;
-    } else if (elementIsWikiLogo(e)) {
-        invertImage(e, 90);
+    } else if (elementIsHyperlink(e)) {
+        e.style.color = GM_getValue("linkColor");
+        changeBackgroundColor(e);
         return true;
     } else if (elementIsKeyboardKey(e)) {
         e.style.foregroundColor = DEFAULT_BACKGROUND_COLOR;
@@ -213,6 +218,10 @@ function invertImage(img, percent) {
     img.style.filter = "invert(" + percent + "%)";
 }
 
+function elementIsHyperlink(e) {
+    return e.tagName.toLowerCase() === 'a';
+}
+
 function elementIsWikiLogo(e) {
     return e.className.toLowerCase().includes("mw-wiki-logo");
 }
@@ -264,7 +273,7 @@ function changeForegroundColor(e) {
     if (colorIsRGB(foregroundColor)) {
         foregroundColor = splitToRGB(foregroundColor);
         foregroundColor = inverseRBGColor(foregroundColor);
-        foregroundColor = increaseRGBToMatchContrastValue(foregroundColor, DEFAULT_BACKGROUND_COLOR_RGB, DEFAULT_CONTRAST_VALUE, 30);
+        foregroundColor = increaseRGBToMatchContrastValue(foregroundColor, DEFAULT_BACKGROUND_COLOR_RGB, GM_getValue("contrastValue"), 30);
         e.style.color = RGBArrayToString(foregroundColor);
     } else {
         e.style.color = DEFAULT_FOREGROUND_COLOR;
@@ -280,7 +289,7 @@ function changeBackgroundColor(e) {
         if (RGBTooDark(backgroundColor)) {
             backgroundColor = addValueToRGB(backgroundColor, 30);
         }
-        backgroundColor = decreaseRGBToMatchContrastValue(backgroundColor, DEFAULT_BACKGROUND_COLOR_RGB, DEFAULT_CONTRAST_VALUE, -30);
+        backgroundColor = decreaseRGBToMatchContrastValue(backgroundColor, DEFAULT_BACKGROUND_COLOR_RGB, GM_getValue("contrastValue"), -30);
         e.style.backgroundColor = RGBArrayToString(backgroundColor);
     } else if (backgroundColor !== "rgba(0, 0, 0, 0)" || elementToChangeBackground(e)) {
         e.style.backgroundColor = DEFAULT_BACKGROUND_COLOR;
@@ -356,6 +365,10 @@ function RGBArrayToString(rgb) {
     return 'rgb(' + rgb[0] + ', ' + rgb[1] + ', ' + rgb[2] + ')';
 }
 
+function RGBToHex(r, g, b) {
+    return "#" + ((1 << 24) + (Number(r) << 16) + (Number(g) << 8) + Number(b)).toString(16).slice(1);
+}
+
 function elementToChangeBackground(e) {
     return e.id.toLowerCase().includes("mw-head") || e.parentElement.id.includes("ca-");
 }
@@ -399,21 +412,41 @@ function invertSpecialElements() {
     }
 }
 
-//############################################___Toggle_Script_Button___################################################
+//############################################___Init_Elements___#######################################################
 
-function addToggleScriptButton() {
-    // Create a list that contains toggle script button
-    let toggleScriptList = document.createElement('li');
-    let toggleScriptElement = document.createElement('a');
-    toggleScriptElement.id = "toggleScriptElement";
-    toggleScriptElement.style.fontWeight = 'bold';
-    toggleScriptElement.onclick = function () {
-        // `GM_setValue()` and `GM_getValue()` are from Tampermonkey API
-        GM_setValue("scriptEnabled", !GM_getValue("scriptEnabled"));
-        location.reload();
+function initSettingElements() {
+    initGMStorage();
+    insertSettingsModalStyles();
+    createSettingsModal();
+    addButtonListeners();
+    addSettingsButton();
+    updateSettingsModal();
+}
+
+function initGMStorage(reset = false) {
+    if (!GM_getValue("linkColor") || reset) {
+        const split = splitToRGB(DEFAULT_LINK_COLOR);
+        GM_setValue("linkColor", RGBToHex(split[0], split[1], split[2]));
+    }
+    if (!GM_getValue("contrastValue") || reset) {
+        GM_setValue("contrastValue", DEFAULT_CONTRAST_VALUE);
+    }
+}
+
+//############################################___Settings_Button___#####################################################
+
+function addSettingsButton() {
+    // Create a list that contains settings button
+    let settingsButtonList = document.createElement("li");
+    let settingsButton = document.createElement("a");
+    settingsButton.id = "settingsButton";
+    settingsButton.style.fontWeight = 'bold';
+    settingsButton.onclick = function () {
+        let settingsModal = document.getElementById("settingsModal")
+        settingsModal.style.display = "block";
         return false;
     };
-    toggleScriptList.appendChild(toggleScriptElement);
+    settingsButtonList.appendChild(settingsButton);
     // Getting the login button and logout button
     const loginLinkElement = document.getElementById("pt-login");
     const logoutLinkElement = document.getElementById("pt-logout");
@@ -421,45 +454,365 @@ function addToggleScriptButton() {
     // Get the parent of either element that is defined
     let parentList = (loginLinkElement) ? (loginLinkElement.parentElement) : (logoutLinkElement.parentElement);
     // Adding toggle script button to after the login/logout button
-    parentList.appendChild(toggleScriptList);
-    updateToggleScriptButton();
+    parentList.appendChild(settingsButtonList);
+    setSettingsButton();
 }
 
-function updateToggleScriptButton() {
+function setSettingsButton() {
+    let settingsButton = document.getElementById("settingsButton");
+    let text, title;
     switch (LOCALE) {
         case "zh":
-            if (GM_getValue("scriptEnabled")) {
-                setToggleScriptButton("关闭黑色主题", "单击来关闭维基百科黑色主题。", "white");
-            } else {
-                setToggleScriptButton("开启黑色主题", "单击来开启维基百科黑色主题。", "black");
-            }
+            text = "设置";
+            title = "设置维基百科黑色主题。";
             break;
         case "ja":
-            if (GM_getValue("scriptEnabled")) {
-                setToggleScriptButton("ダークテーマを解除する", "ここをクリックしてダークテーマから切り替わる。", "white");
-            } else {
-                setToggleScriptButton("ダークテーマを設定する", "ここをクリックしてダークテーマに切り替わる。", "black");
-            }
+            text = "設定";
+            title = "ウィキペディアダークテーマを設定します。";
             break;
         case "fr":
-            if (GM_getValue("scriptEnabled")) {
-                setToggleScriptButton("Fermer le thème noir", "Cliquer pour fermer le thème noir.", "white");
-            } else {
-                setToggleScriptButton("Ouvrir le thème noir", "Cliquer pour ouvrir le thème noir.", "black");
-            }
+            text = "Les paramètres";
+            title = "Modifiez les paramètres de Wikipédia Dark Theme.";
             break;
         default:
-            if (GM_getValue("scriptEnabled")) {
-                setToggleScriptButton("Disable Dark Theme", "Click to disable Wikipedia Dark Theme.", "white");
-            } else {
-                setToggleScriptButton("Enable Dark Theme", "Click to enable Wikipedia Dark Theme.", "black");
-            }
+            text = "Settings";
+            title = "Change settings for Wikipedia Dark Theme.";
+    }
+    settingsButton.text = text;
+    settingsButton.title = title;
+    settingsButton.style.color = GM_getValue("scriptEnabled") ? "white" : "black";
+}
+
+//############################################___Settings_Modal___######################################################
+
+function createSettingsModal() {
+    let settingsModal = `
+        <div id="settingsModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                  <h5>Wikipedia Dark Theme Settings</h5>
+                  <span id="close" class="close">&times;</span>
+                </div>
+                <div class="modal-body">
+                     <h6>Theme preferences</h6>
+                     <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="radio" name="theme" id="darkTheme" value="dark">
+                      <label class="form-check-label" for="darkTheme">Dark</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="radio" name="theme" id="lightTheme" value="light">
+                      <label class="form-check-label" for="lightTheme">Light</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="radio" name="theme" id="syncTheme" value="sync">
+                      <label class="form-check-label" for="syncTheme">Sync with system</label>
+                    </div>
+                    <h6>Color preferences (in dark theme)</h6>
+                    <div class="form-check-inline">
+                        <label for="linkColor" id="linkColorLabel">Link color: </label>
+                        <input type="color" id="linkColor" title="Choose your link color">
+                    </div>
+                    <div class="form-check-inline">
+                        <label for="contrastValue">Contrast value:</label>
+                        <input type="number" id="contrastValue" min="3" max="9" title="Enter a contrast value (between 3 and 9)">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                   <button class="btn btn-outline-secondary" id="restoreButton">Restore defaults</button>
+                   <button class="btn btn-outline-secondary close">Cancel</button>
+                   <button class="btn btn-outline-primary" id="saveButton">Save changes</button>
+                </div>
+            </div>
+        '</div>'
+    `;
+    document.body.insertAdjacentHTML('afterend', settingsModal)
+}
+
+function setSettings() {
+    if (document.getElementById("syncTheme").checked) {
+        GM_setValue("syncTheme", true);
+    } else {
+        GM_setValue("syncTheme", false);
+    }
+    if (document.getElementById("darkTheme").checked) {
+        GM_setValue("scriptEnabled", true);
+    } else {
+        GM_setValue("scriptEnabled", false);
+    }
+    GM_setValue("linkColor", document.getElementById("linkColor").value);
+    const contrastValue = document.getElementById("contrastValue").value;
+    if (1 <= contrastValue <= 10) {
+        GM_setValue("contrastValue", contrastValue);
+    } else {
+        GM_setValue("contrastValue", DEFAULT_CONTRAST_VALUE);
     }
 }
 
-function setToggleScriptButton(text, title, color) {
-    const toggleScriptElement = document.getElementById("toggleScriptElement");
-    toggleScriptElement.text = text;
-    toggleScriptElement.title = title;
-    toggleScriptElement.style.color = color;
+function updateSettingsModal() {
+    updateThemePreferences();
+    updateColorPreferences();
+}
+
+function updateThemePreferences() {
+    if (GM_getValue("syncTheme")) {
+        const userPrefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+        if (userPrefersDark) {
+            GM_setValue("scriptEnabled", true);
+        } else {
+            GM_setValue("scriptEnabled", false);
+        }
+        document.getElementById("syncTheme").checked = "checked";
+    } else {
+        if (GM_getValue("scriptEnabled")) {
+            document.getElementById("darkTheme").checked = "checked";
+        } else {
+            document.getElementById("lightTheme").checked = "checked";
+        }
+    }
+}
+
+function updateColorPreferences() {
+    document.getElementById("linkColor").value = GM_getValue("linkColor");
+    document.getElementById("contrastValue").value = GM_getValue("contrastValue");
+}
+
+function addButtonListeners() {
+    const closeButtons = document.getElementsByClassName("close");
+    for (let i = 0; i < closeButtons.length; i++) {
+        closeButtons[i].onclick = function () {
+            document.getElementById("settingsModal").style.display = "none";
+        }
+    }
+    window.onclick = function (event) {
+        const settingsModal = document.getElementById("settingsModal")
+        if (event.target === settingsModal) {
+            settingsModal.style.display = "none";
+        }
+    }
+    const saveButton = document.getElementById("saveButton");
+    saveButton.onclick = function () {
+        setSettings();
+        updateThemePreferences();
+        document.getElementById("settingsModal").style.display = "none";
+        location.reload();
+    }
+    const restoreButton = document.getElementById("restoreButton");
+    restoreButton.onclick = function () {
+        initGMStorage(true);
+        document.getElementById("settingsModal").style.display = "none";
+        location.reload();
+    }
+}
+
+function insertSettingsModalStyles() {
+    const style = document.createElement('style');
+    style.innerHTML = `
+         .modal {
+            font-family: var(--bs-font-sans-serif);
+            font-size: 1rem;
+            font-weight: 400;
+            line-height: 1.5;
+            color: #212529;
+            -webkit-text-size-adjust: 100%;
+            display: none;
+            position: fixed;
+            z-index: 1060;
+            padding-top: 100px;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow-x: hidden;
+            overflow-y: auto;
+            outline: 0;
+            background-color: rgb(0,0,0);
+            background-color: rgba(0,0,0,0.4);
+        }
+        .modal-content {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            width: 450px;
+            pointer-events: auto;
+            background-color: #fff;
+            background-clip: padding-box;
+            border: 1px solid rgba(0,0,0,.2);
+            border-radius: .3rem;
+            outline: 0;
+            margin: auto;
+            -webkit-animation-name: animatetop;
+            -webkit-animation-duration: 0.4s;
+            animation-name: animatetop;
+            animation-duration: 0.4s
+        }
+        .modal-header {
+            display: flex;
+            flex-shrink: 0;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 1rem;
+            border-bottom: 1px solid #dee2e6;
+            border-top-left-radius: calc(.3rem - 1px);
+            border-top-right-radius: calc(.3rem - 1px);
+        }
+        .modal-body {
+            position: relative;
+            flex: 1 1 auto;
+            padding: 1rem;
+        }
+        .modal-footer {
+            display: flex;
+            flex-wrap: wrap;
+            flex-shrink: 0;
+            align-items: center;
+            justify-content: flex-end;
+            padding: .75rem;
+            border-top: 1px solid #dee2e6;
+            border-bottom-right-radius: calc(.3rem - 1px);
+            border-bottom-left-radius: calc(.3rem - 1px);
+        }
+        .modal-footer > * {
+            margin: .25rem;
+        }
+        @-webkit-keyframes animatetop {
+          from {top:-300px; opacity:0} 
+          to {top:0; opacity:1}
+        }
+        @keyframes animatetop {
+          from {top:-300px; opacity:0}
+          to {top:0; opacity:1}
+        }
+        #close {
+          color: grey;
+          float: right;
+          font-size: 28px;
+          font-weight: bold;
+        }
+        #close:hover,
+        #close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        #restoreButton {
+            margin-right: auto;
+        }
+        #linkColorLabel {
+            margin: .4rem;
+        }
+        .h1, .h2, .h3, .h4, .h5, .h6, h1, h2, h3, h4, h5, h6 {
+            margin-top: 0;
+            margin-bottom: .5rem;
+            font-weight: 500;
+            line-height: 1.2;
+        }
+        .h5, h5 {
+            font-size: 1.25rem;
+        }
+        .h6, h6 {
+            font-size: 1rem;
+        }
+        .btn {
+            display: inline-block;
+            font-weight: 400;
+            line-height: 1.5;
+            color: #212529;
+            text-align: center;
+            text-decoration: none;
+            vertical-align: middle;
+            cursor: pointer;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            user-select: none;
+            background-color: transparent;
+            border: 1px solid transparent;
+            padding: .375rem .75rem;
+            font-size: 1rem;
+            border-radius: .25rem;
+            transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+        }
+        .btn-outline-primary {
+            color: #007bff;
+            background-color: transparent;
+            background-image: none;
+            border-color: #007bff;
+        }
+        .btn-outline-primary:hover {
+            color: #fff;
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+        .btn-outline-secondary {
+            color: #6c757d;
+            background-color: transparent;
+            background-image: none;
+            border-color: #6c757d;
+        }
+        .btn-outline-secondary:hover {
+            color: #fff;
+            background-color: #6c757d;
+            border-color: #6c757d;
+        }
+        .form-check-input:checked[type="radio"] {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='2' fill='%23fff'/%3e%3c/svg%3e");
+        }
+        .form-check {
+            display: block;
+            min-height: 1.5rem;
+            padding-left: 1.5em;
+            margin-bottom: .125rem;
+        }
+        .form-check-inline {
+            display: inline-block;
+            margin-right: 1rem;
+        }
+        .form-check-input:checked {
+            background-color: #0d6efd;
+            border-color: #0d6efd;
+        }
+        .form-check-input[type="radio"] {
+            border-radius: 50%;
+        }
+        .form-check .form-check-input {
+            float: left;
+            margin-left: -1.5em;
+        }
+        .form-check-input {
+            width: 1em;
+            height: 1em;
+            margin-top: .25em;
+            vertical-align: top;
+            background-color: #fff;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: contain;
+            border: 1px solid rgba(0,0,0,.25);
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            -webkit-print-color-adjust: exact;
+            color-adjust: exact;
+        }
+        #contrastValue {
+            display: inline-block;
+            width: 50px;
+            padding: .375rem .75rem;
+            font-size: 1rem;
+            font-weight: 400;
+            line-height: 1.5;
+            color: #212529;
+            background-color: #fff;
+            background-clip: padding-box;
+            border: 1px solid #ced4da;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            border-radius: .25rem;
+            transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+        }
+        .label {
+            display: inline-block;
+        }
+    `
+    document.head.appendChild(style);
 }
