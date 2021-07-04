@@ -1,5 +1,10 @@
 # Wikipedia Dark Theme Changelog
 
+## [1.40](https://github.com/MaxsLi/WikipediaDarkTheme/commit/b55d757c33d49420d71e21d84eaf8e1e5315521c) (2021-07-04)
+
+* Due to overwhelming (2) requests, I have added a settings modal. Within, user can change the theme and color preferences
+* Minor bug fix
+
 ## [1.32](https://github.com/MaxsLi/WikipediaDarkTheme/commit/fbd8c29372cbd3f53e0561b0d366b28ec9c18194) (2021-05-24)
 
 * Hot fix
