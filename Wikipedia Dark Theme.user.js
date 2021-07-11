@@ -14,7 +14,7 @@
 // @match        *://*.wikivoyage.org/*
 // @match        *://*.wiktionary.org/*
 // @namespace    https://github.com/li-shangru/WikipediaDarkTheme
-// @icon         https://www.wikipedia.org/favicon.ico
+// @icon         https://en.wikipedia.org/favicon.ico
 // @grant        GM_setValue
 // @grant        GM_getValue
 // @run-at       document-start
