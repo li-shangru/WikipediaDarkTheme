@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Wikipedia Dark Theme
 // @author       Shangru Li
-// @version      1.50
+// @version      1.51
 // @match        *://*.wikipedia.org/*
 // @match        *://*.mediawiki.org/*
 // @match        *://*.wikimedia.org/*
@@ -425,6 +425,7 @@ function overrideSpecialElementStyles() {
   document.head.appendChild(getVisitedLinkStyle());
   document.head.appendChild(getTableStyle());
   document.head.appendChild(getAncestriesStyle());
+  document.head.appendChild(getListStyle());
   document.head.appendChild(getLanguageSpecificStyle());
 }
 
@@ -435,7 +436,7 @@ function getVisitedLinkStyle() {
             color: ` + GM_getValue("visitedLinkColor") + ` !important;
         }
     `
-  return visitedLinkStyle
+  return visitedLinkStyle;
 }
 
 function getTableStyle() {
@@ -445,7 +446,7 @@ function getTableStyle() {
             background-color: ` + DEFAULT_BACKGROUND_COLOR + ` !important;
         }
     `
-  return tableStyle
+  return tableStyle;
 }
 
 function getAncestriesStyle() {
@@ -460,7 +461,17 @@ function getAncestriesStyle() {
             border-left: white solid 1px !important;
         }
     `
-  return ancestriesStyle
+  return ancestriesStyle;
+}
+
+function getListStyle() {
+  const listStyle = document.createElement('style');
+  listStyle.innerHTML = `
+        ul {
+            list-style-image: none;
+        }
+  `
+  return listStyle;
 }
 
 function getLanguageSpecificStyle() {
@@ -517,7 +528,7 @@ function getLanguageSpecificStyle() {
             .mw-parser-output .main-top-left { background-image: linear-gradient(to right, #070605 0%,#070605 70%, rgba(7,6,5,0)100%) !important; }
         `
   }
-  return langStyle
+  return langStyle;
 }
 
 
