@@ -43,9 +43,6 @@ const DEFAULT_LINK_COLOR = "rgb(249, 186, 82)";
 
 const LOCALE = window.location.href.substring(0, window.location.href.indexOf(".wiki")).slice(-2);
 
-const defaultBackgroundColorSplit = splitToRGB(DEFAULT_FOREGROUND_COLOR);
-const defaultBackgroundColorHSL = RGBtoHSL(defaultBackgroundColorSplit[0], defaultBackgroundColorSplit[1], defaultBackgroundColorSplit[2]);
-
 // list of tags of the wikipedia logos and symbols to be excluded from setting backgroundColor to white
 const EXCLUDE_SRC_TAG = [
   "protection-shackle", "green_check", "symbol_support_vote",
@@ -281,7 +278,9 @@ function changeForegroundColor(e) {
     const foregroundColorSplit = splitToRGB(foregroundColor);
     const foregroundColorInverse = inverseRBGColor(foregroundColorSplit);
     const foregroundColorInverseHSV = RGBtoHSL(foregroundColorInverse[0], foregroundColorInverse[1], foregroundColorInverse[2]);
-    const foregroundColorHSL = increaseLuminance(foregroundColorInverseHSV, defaultBackgroundColorHSL, DEFAULT_RELATIVE_LUMINANCE, 1);
+    const defaultForegroundColorSplit = splitToRGB(DEFAULT_FOREGROUND_COLOR);
+    const defaultForegroundColorHSL = RGBtoHSL(defaultForegroundColorSplit[0], defaultForegroundColorSplit[1], defaultForegroundColorSplit[2]);
+    const foregroundColorHSL = increaseLuminance(foregroundColorInverseHSV, defaultForegroundColorHSL, DEFAULT_RELATIVE_LUMINANCE, 1);
     const foregroundColorRGB = HSLtoRGB(foregroundColorHSL[0], foregroundColorHSL[1], foregroundColorHSL[2]);
     e.style.color = RGBArrayToString(foregroundColorRGB);
   } else {
@@ -301,6 +300,8 @@ function changeBackgroundColor(e) {
     } else if (backgroundColorInverseHSV[2] > 80) {
       backgroundColorInverseHSV[2] -= 10;
     }
+    const defaultBackgroundColorSplit = splitToRGB(DEFAULT_BACKGROUND_COLOR);
+    const defaultBackgroundColorHSL = RGBtoHSL(defaultBackgroundColorSplit[0], defaultBackgroundColorSplit[1], defaultBackgroundColorSplit[2]);
     const backgroundColorHSL = decreaseLuminance(backgroundColorInverseHSV, defaultBackgroundColorHSL, DEFAULT_RELATIVE_LUMINANCE, 1);
     const backgroundColorRGB = HSLtoRGB(backgroundColorHSL[0], backgroundColorHSL[1], backgroundColorHSL[2]);
     e.style.backgroundColor = RGBArrayToString(backgroundColorRGB);

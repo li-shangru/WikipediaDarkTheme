@@ -1,5 +1,10 @@
 # Wikipedia Dark Theme Changelog
 
+## [1.51](https://github.com/li-shangru/WikipediaDarkTheme/commit/) (2021-07-??)
+
+* Fix list style
+* Minor color change improvement
+
 ## [1.50](https://github.com/li-shangru/WikipediaDarkTheme/commit/b48f388b9a0bff9a3aa52ace93a7c0adeffcf1cc) (2021-07-11)
 
 * Re-implemented color inverse function, from using RGB to match contrast value, to HSL matching relative luminance
