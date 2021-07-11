@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Wikipedia Dark Theme
 // @author       Shangru Li
-// @version      1.41
+// @version      1.50
 // @match        *://*.wikipedia.org/*
 // @match        *://*.mediawiki.org/*
 // @match        *://*.wikimedia.org/*
@@ -13,8 +13,8 @@
 // @match        *://*.wikiversity.org/*
 // @match        *://*.wikivoyage.org/*
 // @match        *://*.wiktionary.org/*
-// @namespace    https://github.com/MaxsLi/WikipediaDarkTheme
-// @icon         https://www.wikipedia.org/favicon.ico
+// @namespace    https://github.com/li-shangru/WikipediaDarkTheme
+// @icon         https://en.wikipedia.org/favicon.ico
 // @grant        GM_setValue
 // @grant        GM_getValue
 // @run-at       document-start
@@ -32,8 +32,8 @@
 
 'use strict';
 
-//############################################___Default_Colors___######################################################
-const DEFAULT_CONTRAST_VALUE = 8;
+//############################################___Default_Values___######################################################
+const DEFAULT_RELATIVE_LUMINANCE = 0.9;
 const DEFAULT_FOREGROUND_COLOR = "rgb(238, 255, 255)";
 const DEFAULT_BACKGROUND_COLOR = "rgb(35, 35, 35)";
 const DEFAULT_LINK_COLOR = "rgb(249, 186, 82)";
@@ -43,65 +43,66 @@ const DEFAULT_LINK_COLOR = "rgb(249, 186, 82)";
 
 const LOCALE = window.location.href.substring(0, window.location.href.indexOf(".wiki")).slice(-2);
 
-const DEFAULT_BACKGROUND_COLOR_RGB = splitToRGB(DEFAULT_BACKGROUND_COLOR);
+const defaultBackgroundColorSplit = splitToRGB(DEFAULT_FOREGROUND_COLOR);
+const defaultBackgroundColorHSL = RGBtoHSL(defaultBackgroundColorSplit[0], defaultBackgroundColorSplit[1], defaultBackgroundColorSplit[2]);
 
 // list of tags of the wikipedia logos and symbols to be excluded from setting backgroundColor to white
 const EXCLUDE_SRC_TAG = [
-    "protection-shackle", "green_check", "symbol_support_vote",
-    "edit-clear", "information_icon", "increase2", "decrease_positive",
-    "steady2", "decrease2", "increase_negative", "red_question_mark",
-    "blue_check", "x_mark", "yes_check", "twemoji", "walnut", "cscr-featured",
-    "sound-openclipart", "folder_hexagonal_icon", "symbol_book_class2",
-    "question_book-new", "wiktionary-logo", "commons-logo", "wikinews-logo",
-    "wikiquote-logo", "wikivoyage-logo", "sound-icon", "wikibooks-logo",
-    "wikiversity-logo", "ambox", "system-search", "split-arrows", "wikiversity_logo",
-    "wikisource-logo", "wikimedia_community_logo", "wikidata-logo", "mediawiki-logo",
-    "wikispecies-logo", "nuvola_apps", "white_flag_icon",
-    "wiki_letter_w_cropped", "edit-copy_purple-wikiq", "acap", "portal-puzzle",
-    "star_of_life", "disambig-dark", "gnome", "office-book", "audio-input-microphone",
-    "hsutvald2", "hspolitic", "hsdagensdatum", "hsvissteduatt", "pl_wiki_aktualnosci_ikona",
-    "hsbild", "wiki_aktualnosci_ikona", "hs_vdq", "hssamarbete", "hswpedia", "w-circle",
-    "red_pencil_icon", "merge-arrow", "generic_with_pencil", "hsaktuell", "hsearth",
-    "wikimedia-logo-circle", "wiktionary_ko_without_text", "mediawiki-notext",
-    "wiktprintable_without_text", "dialog-information", "applications-office",
-    "celestia", "antistub", "wiki_letter", "kit_body", "ui_icon_edit-ltr-progressive",
-    "merge-split-transwiki", "mergefrom", "px-steady", "px-decrease", "px-increase",
-    "question_book", "padlock-silver", "incubator-logo", "px-chinese_conversion",
-    "px-applications-graphics", "px-pody_candidate", "px-potd-logo", "px-pd-icon",
-    "px-dialog-warning", "px-checked_copyright_icon", "px-valued_image_seal",
-    "px-cscr-former", "px-red_x", "px-crystal_clear_app_kedit", "px-people_icon",
-    "kit_shorts", "kit_socks", "wikipedia-logo-v2", "phacility_phabricator_logo",
-    "wikimedia_cloud_services_logo", "lingualibre-logo", "le_dico_des_ados_small_logo",
-    "vikidia_v_vectorised", "sciences_humaines", "science-symbol", "history2",
-    "vote3_final", "p_religion_world", "tecno-rueda", "notification-icon",
-    "countries-vector", "p_history", "social_sciences", "p_culture", "p_religion_world",
-    "p_sport", "p_train", "p_parthenon", "wiktionary_small", "wikimedia-logo",
-    "crystal_clear_app_xmag", "1rightarrow", "emblem-qual", "hswikimedia", "hsutvald",
-    "hstools", "hscontribs", "pl_wiki_czywiesz_ikona", "hs_geo", "p_wwii", "p_literature",
-    "p_science", "p_globe", "p_vip", "p_mathematics", "p_chemistry", "p_medicine3",
-    "p_technology", "datum17", "hs_liste", "hs_rtl_exclamation", "hsbook", "hshome",
-    "hs_korganizer", "hseditor", "84_tematyczny_logo_propozycja", "hsbra",
-    "pl_wiki_kalendarium_ikona", "pl_wiki_inm_ikona", "wiktionarypl_nodesc",
-    "wikimedia_polska_logo", "icon_of_three_people_in_different_shades_of_grey",
-    "wikimania", "hs_skand", "emblem-star-gray", "help-browser-red", "globe-with-clock",
-    "records", "office-calendar", "preferences-desktop-locale", "system-users",
-    "applications-system", "emblem-earth", "mail-closed", "tango-nosources",
-    "emblem-scales", "mediawiki-2020"
+  "protection-shackle", "green_check", "symbol_support_vote",
+  "edit-clear", "information_icon", "increase2", "decrease_positive",
+  "steady2", "decrease2", "increase_negative", "red_question_mark",
+  "blue_check", "x_mark", "yes_check", "twemoji", "walnut", "cscr-featured",
+  "sound-openclipart", "folder_hexagonal_icon", "symbol_book_class2",
+  "question_book-new", "wiktionary-logo", "commons-logo", "wikinews-logo",
+  "wikiquote-logo", "wikivoyage-logo", "sound-icon", "wikibooks-logo",
+  "wikiversity-logo", "ambox", "system-search", "split-arrows", "wikiversity_logo",
+  "wikisource-logo", "wikimedia_community_logo", "wikidata-logo", "mediawiki-logo",
+  "wikispecies-logo", "nuvola_apps", "white_flag_icon",
+  "wiki_letter_w_cropped", "edit-copy_purple-wikiq", "acap", "portal-puzzle",
+  "star_of_life", "disambig-dark", "gnome", "office-book", "audio-input-microphone",
+  "hsutvald2", "hspolitic", "hsdagensdatum", "hsvissteduatt", "pl_wiki_aktualnosci_ikona",
+  "hsbild", "wiki_aktualnosci_ikona", "hs_vdq", "hssamarbete", "hswpedia", "w-circle",
+  "red_pencil_icon", "merge-arrow", "generic_with_pencil", "hsaktuell", "hsearth",
+  "wikimedia-logo-circle", "wiktionary_ko_without_text", "mediawiki-notext",
+  "wiktprintable_without_text", "dialog-information", "applications-office",
+  "celestia", "antistub", "wiki_letter", "kit_body", "ui_icon_edit-ltr-progressive",
+  "merge-split-transwiki", "mergefrom", "px-steady", "px-decrease", "px-increase",
+  "question_book", "padlock-silver", "incubator-logo", "px-chinese_conversion",
+  "px-applications-graphics", "px-pody_candidate", "px-potd-logo", "px-pd-icon",
+  "px-dialog-warning", "px-checked_copyright_icon", "px-valued_image_seal",
+  "px-cscr-former", "px-red_x", "px-crystal_clear_app_kedit", "px-people_icon",
+  "kit_shorts", "kit_socks", "wikipedia-logo-v2", "phacility_phabricator_logo",
+  "wikimedia_cloud_services_logo", "lingualibre-logo", "le_dico_des_ados_small_logo",
+  "vikidia_v_vectorised", "sciences_humaines", "science-symbol", "history2",
+  "vote3_final", "p_religion_world", "tecno-rueda", "notification-icon",
+  "countries-vector", "p_history", "social_sciences", "p_culture", "p_religion_world",
+  "p_sport", "p_train", "p_parthenon", "wiktionary_small", "wikimedia-logo",
+  "crystal_clear_app_xmag", "1rightarrow", "emblem-qual", "hswikimedia", "hsutvald",
+  "hstools", "hscontribs", "pl_wiki_czywiesz_ikona", "hs_geo", "p_wwii", "p_literature",
+  "p_science", "p_globe", "p_vip", "p_mathematics", "p_chemistry", "p_medicine3",
+  "p_technology", "datum17", "hs_liste", "hs_rtl_exclamation", "hsbook", "hshome",
+  "hs_korganizer", "hseditor", "84_tematyczny_logo_propozycja", "hsbra",
+  "pl_wiki_kalendarium_ikona", "pl_wiki_inm_ikona", "wiktionarypl_nodesc",
+  "wikimedia_polska_logo", "icon_of_three_people_in_different_shades_of_grey",
+  "wikimania", "hs_skand", "emblem-star-gray", "help-browser-red", "globe-with-clock",
+  "records", "office-calendar", "preferences-desktop-locale", "system-users",
+  "applications-system", "emblem-earth", "mail-closed", "tango-nosources",
+  "emblem-scales", "mediawiki-2020"
 ];
 
 // list of tags of images to have color inverted, both lists are subjected to amend
 const INVERT_SRC_TAG = [
-    "loudspeaker", "signature", "signatur", "chinese_characters", "/media/math/render/",
-    "translation_to_english_arrow", "disambig_gray", "wikimedia-logo_black", "blue_pencil",
-    "latin_alphabet_", "_cursiva", "unbalanced_scales", "question%2c_web_fundamentals",
-    "wikipedia-tagline", "wikipedia-wordmark", "copyright/wikipedia", "ui_icon_ellipsis",
-    "bluebg_rounded_croped", "blue-bg_rounded_cropped_right", "icon_facebook",
-    "youtube_social_dark_circle", "instagram_circle", "icon_twitter",
-    "%d8%a8%d8%a7%d9%84%d8%ad%d9%84%d9%8a%d8%a9", "font_awesome_5_solid_feather-alt",
-    "font_awesome_5_solid_tree", "font_awesome_5_solid_globe", "font_awesome_5_solid_futbol",
-    "font_awesome_5_solid_hourglass", "font_awesome_5_solid_users", "font_awesome_5_solid_palette",
-    "font_awesome_5_solid_rocket", "font_awesome_5_solid_bong", "vlad1Trezub", "font_awesome_5_solid_flag",
-    "font_awesome_5_solid_university", "wikipedia_wordmark", "wikipedia-logo-textonly"
+  "loudspeaker", "signature", "signatur", "chinese_characters", "/media/math/render/",
+  "translation_to_english_arrow", "disambig_gray", "wikimedia-logo_black", "blue_pencil",
+  "latin_alphabet_", "_cursiva", "unbalanced_scales", "question%2c_web_fundamentals",
+  "wikipedia-tagline", "wikipedia-wordmark", "copyright/wikipedia", "ui_icon_ellipsis",
+  "bluebg_rounded_croped", "blue-bg_rounded_cropped_right", "icon_facebook",
+  "youtube_social_dark_circle", "instagram_circle", "icon_twitter",
+  "%d8%a8%d8%a7%d9%84%d8%ad%d9%84%d9%8a%d8%a9", "font_awesome_5_solid_feather-alt",
+  "font_awesome_5_solid_tree", "font_awesome_5_solid_globe", "font_awesome_5_solid_futbol",
+  "font_awesome_5_solid_hourglass", "font_awesome_5_solid_users", "font_awesome_5_solid_palette",
+  "font_awesome_5_solid_rocket", "font_awesome_5_solid_bong", "vlad1Trezub", "font_awesome_5_solid_flag",
+  "font_awesome_5_solid_university", "wikipedia_wordmark", "wikipedia-logo-textonly"
 ];
 
 //############################################___Controller___##########################################################
@@ -110,383 +111,495 @@ const INVERT_SRC_TAG = [
 // Document state will go from `loading` --> `interactive` --> `complete`
 // Metadata Block `@run-at document-start` will ensure this script start executing when `loading`
 (document.onreadystatechange = function () {
-    if (GM_getValue("scriptEnabled")) {
-        if ('loading' === document.readyState) {
-            setPageVisibility("hidden");
-        } else if ('interactive' === document.readyState) {
-            applyDarkTheme();
-        } else if ('complete' === document.readyState) {
-            setPageVisibility("visible");
-            initSettingElements();
-            invertSpecialElements();
-        }
+  if (GM_getValue("scriptEnabled")) {
+    if ('loading' === document.readyState) {
+      setPageVisibility("hidden");
+    } else if ('interactive' === document.readyState) {
+      applyDarkTheme();
     } else if ('complete' === document.readyState) {
-        initSettingElements();
+      setPageVisibility("visible");
+      initSettingElements();
+      overrideSpecialElementStyles();
     }
+  } else if ('complete' === document.readyState) {
+    initSettingElements();
+  }
 })();
 
 //############################################___Functions___###########################################################
 
 function setPageVisibility(visibility) {
-    let entirePage = document.getElementsByTagName('html')[0];
-    entirePage.style.backgroundColor = DEFAULT_BACKGROUND_COLOR;
-    entirePage.style.visibility = visibility;
+  const entirePage = document.documentElement;
+  entirePage.style.backgroundColor = DEFAULT_BACKGROUND_COLOR;
+  entirePage.style.visibility = visibility;
 }
 
 function applyDarkTheme() {
-    // General idea is to put all elements on a wikipedia page to an array `allElements`
-    // traverse through this array and reverse the color of each element accordingly
-    // running time o(n), where n is the number of elements on a page
-    document.querySelectorAll('*').forEach(function (element) {
-        try {
-            if (!isSpecialElement(element)) {
-                changeForegroundColor(element);
-                changeBackgroundColor(element);
-            }
-        } catch (e) {
-            console.log(e);
-        }
-    });
+  // General idea is to put all elements on a wikipedia page to an array `allElements`
+  // traverse through this array and reverse the color of each element accordingly
+  // running time o(n), where n is the number of elements on a page
+  document.querySelectorAll('*').forEach(function (element) {
+    try {
+      if (!isSpecialElement(element)) {
+        changeForegroundColor(element);
+        changeBackgroundColor(element);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  });
 }
 
 function isSpecialElement(e) {
-    if (elementIsWikiLogo(e)) {
-        invertImage(e, 90);
-        return true;
-    } else if (elementIsImage(e)) {
-        changeImageIfOnLists(e);
-        return true;
-    } else if (elementIsHyperlink(e)) {
-        e.style.color = GM_getValue("linkColor");
-        changeBackgroundColor(e);
-        return true;
-    } else if (elementIsKeyboardKey(e)) {
-        e.style.foregroundColor = DEFAULT_BACKGROUND_COLOR;
-        return true;
-    } else if (elementIsFamilyTree(e)) {
-        if (e.style.borderTop) {
-            e.style.borderTopColor = "white";
-        }
-        if (e.style.borderBottom) {
-            e.style.borderBottomColor = "white";
-        }
-        if (e.style.borderLeft) {
-            e.style.borderLeftColor = "white";
-        }
-        if (e.style.borderRight) {
-            e.style.borderRightColor = "white";
-        }
-        if (e.style.border) {
-            e.style.borderColor = "white";
-        }
-        return true;
-    } else return (elementIsLegendOrPieChart(e) || elementIsIndicationArrow(e));
+  if (elementIsWikiLogo(e)) {
+    invertImage(e, 90);
+    return true;
+  } else if (elementIsImage(e)) {
+    changeImageIfOnLists(e);
+    return true;
+  } else if (elementIsHyperlink(e)) {
+    if (e.className.toLowerCase().includes("new")) {
+      changeForegroundColor(e);
+    } else {
+      e.style.color = GM_getValue("linkColor");
+    }
+    changeBackgroundColor(e);
+    return true;
+  } else if (elementIsKeyboardKey(e)) {
+    e.style.foregroundColor = DEFAULT_BACKGROUND_COLOR;
+    return true;
+  } else if (elementIsFamilyTree(e)) {
+    if (e.style.borderTop) {
+      e.style.borderTopColor = "white";
+    }
+    if (e.style.borderBottom) {
+      e.style.borderBottomColor = "white";
+    }
+    if (e.style.borderLeft) {
+      e.style.borderLeftColor = "white";
+    }
+    if (e.style.borderRight) {
+      e.style.borderRightColor = "white";
+    }
+    if (e.style.border) {
+      e.style.borderColor = "white";
+    }
+    return true;
+  } else return (elementIsLegendOrPieChart(e) || elementIsIndicationArrow(e));
 }
 
 function elementIsImage(e) {
-    return e.nodeName.toLowerCase() === 'img';
+  return e.nodeName.toLowerCase() === 'img';
 }
 
 function changeImageIfOnLists(img) {
-    if (!imageInExcludeList(img)) {
-        img.style.backgroundColor = "rgb(255, 255, 255)";
-    }
-    if (imageInInvertList(img)) {
-        invertImage(img, 86);
-    }
+  if (!imageInExcludeList(img)) {
+    img.style.backgroundColor = "rgb(255, 255, 255)";
+  }
+  if (imageInInvertList(img)) {
+    invertImage(img, 87);
+  }
 }
 
 function imageInExcludeList(img) {
-    for (let i = 0; i < EXCLUDE_SRC_TAG.length; i++) {
-        if (img.src.toLowerCase().includes(EXCLUDE_SRC_TAG[i])) {
-            return true;
-        }
+  for (let i = 0; i < EXCLUDE_SRC_TAG.length; i++) {
+    if (img.src.toLowerCase().includes(EXCLUDE_SRC_TAG[i])) {
+      return true;
     }
-    return false;
+  }
+  return false;
 }
 
 function imageInInvertList(img) {
-    for (let i = 0; i < INVERT_SRC_TAG.length; i++) {
-        if (img.src.toLowerCase().includes(INVERT_SRC_TAG[i])) {
-            return true;
-        }
+  for (let i = 0; i < INVERT_SRC_TAG.length; i++) {
+    if (img.src.toLowerCase().includes(INVERT_SRC_TAG[i])) {
+      return true;
     }
-    return false;
+  }
+  return false;
 }
 
 function invertImage(img, percent) {
-    img.style.filter = "invert(" + percent + "%)";
+  img.style.filter = "invert(" + percent + "%)";
 }
 
 function elementIsHyperlink(e) {
-    return e.tagName.toLowerCase() === 'a';
+  return e.tagName.toLowerCase() === 'a' ||
+    e.className.toLowerCase().includes("toctext") ||
+    e.className.toLowerCase().includes("autonym");
 }
 
 function elementIsWikiLogo(e) {
-    return e.className.toLowerCase().includes("mw-wiki-logo");
+  return e.className.toLowerCase().includes("mw-wiki-logo");
 }
 
 function elementIsKeyboardKey(e) {
-    return e.className.toLowerCase().includes('keyboard-key');
+  return e.className.toLowerCase().includes('keyboard-key');
 }
 
 function elementIsLegendOrPieChart(e) {
-    return e.className.toLowerCase().includes('legend') ||
-        e.style.borderColor.toLowerCase().includes('transparent') ||
-        (
-            // Pie chart template
-            (
-                e.style.border.toLowerCase().includes("1px solid rgb(0, 0, 0)") ||
-                e.style.border.toLowerCase().includes("1px solid black")
-            ) &&
-            e.style.height === "200px" &&
-            e.style.height === "200px" &&
-            e.style.borderRadius === "100px"
-        ) ||
-        (
-            e.nodeName === "SPAN" && e.textContent.replace(/\s/g, '').length === 0
-        ) || e.innerHTML === "&nbsp;" || e.innerHTML === "​" || e.innerHTML === "■";
+  return e.className.toLowerCase().includes('legend') ||
+    e.style.borderColor.toLowerCase().includes('transparent') ||
+    (
+      // Pie chart template
+      (
+        e.style.border.toLowerCase().includes("1px solid rgb(0, 0, 0)") ||
+        e.style.border.toLowerCase().includes("1px solid black")
+      ) &&
+      e.style.height === "200px" &&
+      e.style.height === "200px" &&
+      e.style.borderRadius === "100px"
+    ) ||
+    (
+      e.nodeName === "SPAN" && e.textContent.replace(/\s/g, '').length === 0
+    ) || e.innerHTML === "&nbsp;" || e.innerHTML === "​" || e.innerHTML === "■";
 }
 
 function elementIsFamilyTree(e) {
-    return e.style.borderTop.toLowerCase().includes("1px solid black") ||
-        e.style.borderTop.toLowerCase().includes("1px dashed black") ||
-        e.style.borderTop.toLowerCase().includes("1px dotted black") ||
-        e.style.borderBottom.toLowerCase().includes("1px solid black") ||
-        e.style.borderBottom.toLowerCase().includes("1px dashed black") ||
-        e.style.borderBottom.toLowerCase().includes("1px dotted black") ||
-        e.style.borderLeft.toLowerCase().includes("1px solid black") ||
-        e.style.borderLeft.toLowerCase().includes("1px dashed black") ||
-        e.style.borderLeft.toLowerCase().includes("1px dotted black") ||
-        e.style.borderRight.toLowerCase().includes("1px solid black") ||
-        e.style.borderRight.toLowerCase().includes("1px dashed black") ||
-        e.style.borderRight.toLowerCase().includes("1px dotted black") ||
-        e.style.border.toLowerCase().includes("2px solid black");
+  return e.style.borderTop.toLowerCase().includes("1px solid black") ||
+    e.style.borderTop.toLowerCase().includes("1px dashed black") ||
+    e.style.borderTop.toLowerCase().includes("1px dotted black") ||
+    e.style.borderBottom.toLowerCase().includes("1px solid black") ||
+    e.style.borderBottom.toLowerCase().includes("1px dashed black") ||
+    e.style.borderBottom.toLowerCase().includes("1px dotted black") ||
+    e.style.borderLeft.toLowerCase().includes("1px solid black") ||
+    e.style.borderLeft.toLowerCase().includes("1px dashed black") ||
+    e.style.borderLeft.toLowerCase().includes("1px dotted black") ||
+    e.style.borderRight.toLowerCase().includes("1px solid black") ||
+    e.style.borderRight.toLowerCase().includes("1px dashed black") ||
+    e.style.borderRight.toLowerCase().includes("1px dotted black") ||
+    e.style.border.toLowerCase().includes("2px solid black");
 }
 
 function elementIsIndicationArrow(e) {
-    return e.innerHTML === "▼" || e.innerHTML === "▲";
+  return e.innerHTML === "▼" || e.innerHTML === "▲";
 }
 
 function changeForegroundColor(e) {
-    let foregroundColor = window.getComputedStyle(e, null).getPropertyValue("color");
-    if (colorIsRGB(foregroundColor)) {
-        foregroundColor = splitToRGB(foregroundColor);
-        foregroundColor = inverseRBGColor(foregroundColor);
-        foregroundColor = increaseRGBToMatchContrastValue(foregroundColor, DEFAULT_BACKGROUND_COLOR_RGB, GM_getValue("contrastValue"), 30);
-        e.style.color = RGBArrayToString(foregroundColor);
-    } else {
-        e.style.color = DEFAULT_FOREGROUND_COLOR;
-    }
+  let foregroundColor = window.getComputedStyle(e, null).getPropertyValue("color");
+  if (colorIsRGB(foregroundColor)) {
+    const foregroundColorSplit = splitToRGB(foregroundColor);
+    const foregroundColorInverse = inverseRBGColor(foregroundColorSplit);
+    const foregroundColorInverseHSV = RGBtoHSL(foregroundColorInverse[0], foregroundColorInverse[1], foregroundColorInverse[2]);
+    const foregroundColorHSL = increaseLuminance(foregroundColorInverseHSV, defaultBackgroundColorHSL, DEFAULT_RELATIVE_LUMINANCE, 1);
+    const foregroundColorRGB = HSLtoRGB(foregroundColorHSL[0], foregroundColorHSL[1], foregroundColorHSL[2]);
+    e.style.color = RGBArrayToString(foregroundColorRGB);
+  } else {
+    e.style.color = DEFAULT_FOREGROUND_COLOR;
+  }
 }
 
 function changeBackgroundColor(e) {
-    const elementComputedStyle = window.getComputedStyle(e, null);
-    let backgroundColor = elementComputedStyle.getPropertyValue("background-color");
-    if (colorIsRGB(backgroundColor)) {
-        backgroundColor = splitToRGB(backgroundColor);
-        backgroundColor = inverseRBGColor(backgroundColor);
-        if (RGBTooDark(backgroundColor)) {
-            backgroundColor = addValueToRGB(backgroundColor, 30);
-        }
-        backgroundColor = decreaseRGBToMatchContrastValue(backgroundColor, DEFAULT_BACKGROUND_COLOR_RGB, GM_getValue("contrastValue"), -30);
-        e.style.backgroundColor = RGBArrayToString(backgroundColor);
-    } else if (backgroundColor !== "rgba(0, 0, 0, 0)" || elementToChangeBackground(e)) {
-        e.style.backgroundColor = DEFAULT_BACKGROUND_COLOR;
+  const elementComputedStyle = window.getComputedStyle(e, null);
+  let backgroundColor = elementComputedStyle.getPropertyValue("background-color");
+  if (colorIsRGB(backgroundColor)) {
+    const backgroundColorSplit = splitToRGB(backgroundColor);
+    const backgroundColorInverse = inverseRBGColor(backgroundColorSplit);
+    const backgroundColorInverseHSV = RGBtoHSL(backgroundColorInverse[0], backgroundColorInverse[1], backgroundColorInverse[2]);
+    if (backgroundColorInverseHSV[2] < 20) {
+      backgroundColorInverseHSV[2] += 10;
+    } else if (backgroundColorInverseHSV[2] > 80) {
+      backgroundColorInverseHSV[2] -= 10;
     }
-    const backgroundImage = elementComputedStyle.getPropertyValue("background-image");
-    if (backgroundImageToRemove(backgroundImage)) {
-        e.style.background = DEFAULT_BACKGROUND_COLOR;
-    }
+    const backgroundColorHSL = decreaseLuminance(backgroundColorInverseHSV, defaultBackgroundColorHSL, DEFAULT_RELATIVE_LUMINANCE, 1);
+    const backgroundColorRGB = HSLtoRGB(backgroundColorHSL[0], backgroundColorHSL[1], backgroundColorHSL[2]);
+    e.style.backgroundColor = RGBArrayToString(backgroundColorRGB);
+  } else if (backgroundColor !== "rgba(0, 0, 0, 0)" || elementToChangeBackground(e)) {
+    e.style.backgroundColor = DEFAULT_BACKGROUND_COLOR;
+  }
+  const backgroundImage = elementComputedStyle.getPropertyValue("background-image");
+  if (backgroundImageToRemove(backgroundImage)) {
+    e.style.background = DEFAULT_BACKGROUND_COLOR;
+  }
 }
 
 function backgroundImageToRemove(backgroundImage) {
-    // This will remove the white banner on Chinese Wikipedia main page
-    return backgroundImage && backgroundImage.includes("Zhwp_blue_banner.png");
-}
-
-function colorIsRGB(c) {
-    return c.match(/rgb\((\d{1,3}), (\d{1,3}), (\d{1,3})\)/);
-}
-
-function splitToRGB(c) {
-    const rgb = colorIsRGB(c);
-    return [rgb[1], rgb[2], rgb[3]];
-}
-
-function inverseRBGColor(c) {
-    let r, g, b;
-    r = 255 - Number(c[0]);
-    g = 255 - Number(c[1]);
-    b = 255 - Number(c[2]);
-    return [r, g, b];
-}
-
-function increaseRGBToMatchContrastValue(colorToChange, colorToMatch, contrastValue, changePerLoop) {
-    let result = colorToChange;
-    while (contrast(result, colorToMatch) < contrastValue) {
-        result = addValueToRGB(result, changePerLoop);
-    }
-    return result;
-}
-
-function decreaseRGBToMatchContrastValue(colorToChange, colorToMatch, contrastValue, changePerLoop) {
-    let result = colorToChange;
-    while (contrast(result, colorToMatch) > contrastValue) {
-        result = addValueToRGB(result, changePerLoop);
-    }
-    return result;
-}
-
-function contrast(rgb1, rgb2) {
-    return (luminance(rgb1) + 0.05) / (luminance(rgb2) + 0.05);
-}
-
-function luminance(rgb) {
-    let result = rgb.map(function (v) {
-        v /= 255;
-        return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
-    });
-    return result[0] * 0.2126 + result[1] * 0.7152 + result[2] * 0.0722;
-}
-
-function addValueToRGB(rgb, value) {
-    return [Number(rgb[0]) + Number(value), Number(rgb[1]) + Number(value), Number(rgb[2]) + Number(value)];
-}
-
-function RGBTooDark(rgb) {
-    if (Number(rgb[0]) < Number(DEFAULT_BACKGROUND_COLOR_RGB[0]) - 10 && Number(rgb[1]) < Number(DEFAULT_BACKGROUND_COLOR_RGB[1]) - 10 &&
-        Number(rgb[2]) < Number(DEFAULT_BACKGROUND_COLOR_RGB[2]) - 10) {
-        return true;
-    }
-}
-
-function RGBArrayToString(rgb) {
-    return 'rgb(' + rgb[0] + ', ' + rgb[1] + ', ' + rgb[2] + ')';
-}
-
-function RGBToHex(r, g, b) {
-    return "#" + ((1 << 24) + (Number(r) << 16) + (Number(g) << 8) + Number(b)).toString(16).slice(1);
+  // This will remove the white banner on Chinese Wikipedia main page
+  return backgroundImage && backgroundImage.includes("Zhwp_blue_banner.png");
 }
 
 function elementToChangeBackground(e) {
-    return e.id.toLowerCase().includes("mw-head") || e.parentElement.id.includes("ca-");
+  return e.id.toLowerCase().includes("mw-head") || e.parentElement.id.includes("ca-");
 }
 
-function invertSpecialElements() {
-    let sheet = window.document.styleSheets[0];
-    if (LOCALE === "zh") {
-        // Chinese conversion box
-        sheet.insertRule('.vectorTabs li { background-image: none; }', sheet.cssRules.length);
-        sheet.insertRule('.vectorTabs li a span { background: ' + DEFAULT_BACKGROUND_COLOR + ' !important; }', sheet.cssRules.length);
-        sheet.insertRule('.vectorTabs li a span { color: ' + DEFAULT_FOREGROUND_COLOR + ' !important; }', sheet.cssRules.length);
-        // Chinese main page
-        sheet.insertRule('@media (min-width: 720px) { .mw-parser-output #mp-2012-column-right-block-b { background: ' + DEFAULT_BACKGROUND_COLOR + ' !important; } }', sheet.cssRules.length);
-    } else if (LOCALE === "fr") {
-        // French Main page and side bar
-        sheet.insertRule('#accueil_2017_en-tete { background: ' + DEFAULT_BACKGROUND_COLOR + ' !important; }', sheet.cssRules.length);
-        sheet.insertRule('#mw-panel { background: ' + DEFAULT_BACKGROUND_COLOR + ' !important; }', sheet.cssRules.length);
-    } else if (LOCALE === "ja") {
-        // Japanese main page headings
-        sheet.insertRule('.mw-parser-output .mainpage-heading-title { background: linear-gradient(to right,rgb(74,51,25),rgba(173,171,170,0)) !important; }', sheet.cssRules.length);
-    } else if (LOCALE === "es") {
-        // Spanish main page headings
-        sheet.insertRule('@media (min-width: 1000px) { .mw-parser-output .main-top-left { background-image: linear-gradient(to right, #070605 0%,#070605 70%, rgba(7,6,5,0)100%) !important; } }', sheet.cssRules.length);
-    } else if (LOCALE === "pl") {
-        // Polish main page headings
-        sheet.insertRule('h2 { background-image: none !important; background: linear-gradient(to right,rgb(74,51,25),rgba(173,171,170,0)) !important; }', sheet.cssRules.length);
-    } else if (LOCALE === "ru") {
-        // Russian main page
-        sheet.insertRule('@media (min-width: 1000px) { .main-top-left { background-image: linear-gradient(to right, #070605 0%,#070605 70%, rgba(7,6,5,0)100%) !important; } }', sheet.cssRules.length);
-    } else if (LOCALE === "sv") {
-        // Swedish main page headings
-        sheet.insertRule('.mw-parser-output .frontPageBlock { background: none !important; }', sheet.cssRules.length);
-        sheet.insertRule('.frontPageBlockTitle { background: linear-gradient(to right,rgb(74,51,25),rgba(173,171,170,0)) !important; }', sheet.cssRules.length);
-    } else if (LOCALE === "uk") {
-        // Ukrainian main page
-        sheet.insertRule('.mw-parser-output #main-head { background: linear-gradient(rgb(30,30,30),' + DEFAULT_BACKGROUND_COLOR + ' ) !important; }', sheet.cssRules.length);
-        sheet.insertRule('.mw-parser-output #main-bottom { background: linear-gradient(' + DEFAULT_BACKGROUND_COLOR + ', rgb(30,30,30)) !important; }', sheet.cssRules.length);
-    } else if (LOCALE === "ko") {
-        // Korean main page
-        sheet.insertRule('.mw-parser-output .main-top-left { background-image: linear-gradient(to right, #070605 0%,#070605 70%, rgba(7,6,5,0)100%) !important; }', sheet.cssRules.length);
-    }
+//############################################___Color_Utility___#######################################################
+
+function colorIsRGB(c) {
+  return c.match(/rgb\((\d{1,3}), (\d{1,3}), (\d{1,3})\)/);
 }
+
+function splitToRGB(c) {
+  const rgb = colorIsRGB(c);
+  return [rgb[1], rgb[2], rgb[3]];
+}
+
+function inverseRBGColor(c) {
+  let r, g, b;
+  r = 255 - Number(c[0]);
+  g = 255 - Number(c[1]);
+  b = 255 - Number(c[2]);
+  return [r, g, b];
+}
+
+function increaseLuminance(colorToChange, colorToMatch, relativeLuminance, changePerLoop) {
+  let result = colorToChange;
+  while ((result[2] / colorToMatch[2]) < relativeLuminance) {
+    result[2] += changePerLoop;
+  }
+  return result;
+}
+
+function decreaseLuminance(colorToChange, colorToMatch, relativeLuminance, changePerLoop) {
+  let result = colorToChange;
+  while ((result[2] / colorToMatch[2]) > relativeLuminance) {
+    result[2] -= changePerLoop;
+  }
+  return result;
+}
+
+function RGBArrayToString(rgb) {
+  return 'rgb(' + rgb[0] + ', ' + rgb[1] + ', ' + rgb[2] + ')';
+}
+
+function RGBToHex(r, g, b) {
+  return "#" + ((1 << 24) + (Math.round(r) << 16) + (Math.round(g) << 8) + Math.round(b)).toString(16).slice(1);
+}
+
+function RGBtoHSL(r, g, b) {
+  r /= 255;
+  g /= 255;
+  b /= 255;
+  let max = Math.max(r, g, b), min = Math.min(r, g, b);
+  let h, s, l = (max + min) / 2;
+  if (max === min) {
+    h = s = 0;
+  } else {
+    const d = max - min;
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+    switch (max) {
+      case r:
+        h = (g - b) / d + (g < b ? 6 : 0);
+        break;
+      case g:
+        h = (b - r) / d + 2;
+        break;
+      case b:
+        h = (r - g) / d + 4;
+        break;
+    }
+
+    h /= 6;
+  }
+  return [h * 360, s * 100, l * 100];
+}
+
+function HSLtoRGB(h, s, l) {
+  let r, g, b;
+  h = h / 360;
+  s = s / 100;
+  l = l / 100;
+  if (s === 0) {
+    r = g = b = l;
+  } else {
+    function hue2rgb(p, q, t) {
+      if (t < 0) t += 1;
+      if (t > 1) t -= 1;
+      if (t < 1 / 6) return p + (q - p) * 6 * t;
+      if (t < 1 / 2) return q;
+      if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+      return p;
+    }
+
+    const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+    const p = 2 * l - q;
+    r = hue2rgb(p, q, h + 1 / 3);
+    g = hue2rgb(p, q, h);
+    b = hue2rgb(p, q, h - 1 / 3);
+  }
+  return [r * 255, g * 255, b * 255];
+}
+
+//############################################___Special_Styles___######################################################
+
+function overrideSpecialElementStyles() {
+  document.head.appendChild(getVisitedLinkStyle());
+  document.head.appendChild(getTableStyle());
+  document.head.appendChild(getAncestriesStyle());
+  document.head.appendChild(getLanguageSpecificStyle());
+}
+
+function getVisitedLinkStyle() {
+  const visitedLinkStyle = document.createElement('style');
+  visitedLinkStyle.innerHTML = `
+        a:not(.mwe-popups-extract):visited, a:not(.mwe-popups-extract).external:visited {
+            color: ` + GM_getValue("visitedLinkColor") + ` !important;
+        }
+    `
+  return visitedLinkStyle
+}
+
+function getTableStyle() {
+  const tableStyle = document.createElement('style');
+  tableStyle.innerHTML = `
+        tr::before {
+            background-color: ` + DEFAULT_BACKGROUND_COLOR + ` !important;
+        }
+    `
+  return tableStyle
+}
+
+function getAncestriesStyle() {
+  const ancestriesStyle = document.createElement('style');
+  ancestriesStyle.innerHTML = `
+        .ahnentafel-t {
+            border-top: white solid 1px !important;
+            border-left: white solid 1px !important;
+        }
+        .ahnentafel-b {
+            border-bottom: white solid 1px !important;
+            border-left: white solid 1px !important;
+        }
+    `
+  return ancestriesStyle
+}
+
+function getLanguageSpecificStyle() {
+  const langStyle = document.createElement('style');
+  if (LOCALE === "zh") {
+    // Chinese conversion box & main page
+    langStyle.innerHTML = `
+            .vectorTabs li { background-image: none; }
+            .vectorTabs li a span { background: ` + DEFAULT_BACKGROUND_COLOR + ` !important; }
+            .vectorTabs li a span { color: ` + DEFAULT_FOREGROUND_COLOR + ` !important; }
+            @media (min-width: 720px) { .mw-parser-output #mp-2012-column-right-block-b { background: ` + DEFAULT_BACKGROUND_COLOR + ` !important; } }
+        `
+  } else if (LOCALE === "fr") {
+    // French Main page and side bar
+    langStyle.innerHTML = `
+            #accueil_2017_en-tete { background: ` + DEFAULT_BACKGROUND_COLOR + ` !important; }
+            '#mw-panel { background: ` + DEFAULT_BACKGROUND_COLOR + ` !important; }
+        `
+  } else if (LOCALE === "ja") {
+    // Japanese main page headings
+    langStyle.innerHTML = `
+            .mw-parser-output .mainpage-heading-title { background: linear-gradient(to right,rgb(74,51,25),rgba(173,171,170,0)) !important; }
+        `
+  } else if (LOCALE === "es") {
+    // Spanish main page headings
+    langStyle.innerHTML = `
+            @media (min-width: 1000px) { .mw-parser-output .main-top-left { background-image: linear-gradient(to right, #070605 0%,#070605 70%, rgba(7,6,5,0)100%) !important; } }
+        `
+  } else if (LOCALE === "pl") {
+    // Polish main page headings
+    langStyle.innerHTML = `
+            h2 { background-image: none !important; background: linear-gradient(to right,rgb(74,51,25),rgba(173,171,170,0)) !important; }
+        `
+  } else if (LOCALE === "ru") {
+    // Russian main page
+    langStyle.innerHTML = `
+            @media (min-width: 1000px) { .main-top-left { background-image: linear-gradient(to right, #070605 0%,#070605 70%, rgba(7,6,5,0)100%) !important; } }
+        `
+  } else if (LOCALE === "sv") {
+    // Swedish main page headings
+    langStyle.innerHTML = `
+            .mw-parser-output .frontPageBlock { background: none !important; }
+            .frontPageBlockTitle { background: linear-gradient(to right,rgb(74,51,25),rgba(173,171,170,0)) !important; }
+        `
+  } else if (LOCALE === "uk") {
+    // Ukrainian main page
+    langStyle.innerHTML = `
+            .mw-parser-output #main-head { background: linear-gradient(rgb(30,30,30), ` + DEFAULT_BACKGROUND_COLOR + ` ) !important; }
+            .mw-parser-output #main-bottom { background: linear-gradient(` + DEFAULT_BACKGROUND_COLOR + `, rgb(30,30,30)) !important; }
+        `
+  } else if (LOCALE === "ko") {
+    // Korean main page
+    langStyle.innerHTML = `
+            .mw-parser-output .main-top-left { background-image: linear-gradient(to right, #070605 0%,#070605 70%, rgba(7,6,5,0)100%) !important; }
+        `
+  }
+  return langStyle
+}
+
 
 //############################################___Init_Elements___#######################################################
 
 function initSettingElements() {
-    initGMStorage();
-    insertSettingsModalStyles();
-    createSettingsModal();
-    addButtonListeners();
-    addSettingsButton();
-    updateSettingsModal();
+  initGMStorage();
+  insertSettingsModalStyle();
+  createSettingsModal();
+  addButtonListeners();
+  addSettingsButton();
+  updateSettingsModal();
 }
 
 function initGMStorage(reset = false) {
-    if (!GM_getValue("linkColor") || reset) {
-        const split = splitToRGB(DEFAULT_LINK_COLOR);
-        GM_setValue("linkColor", RGBToHex(split[0], split[1], split[2]));
-    }
-    if (!GM_getValue("contrastValue") || reset) {
-        GM_setValue("contrastValue", DEFAULT_CONTRAST_VALUE);
-    }
+  if (!GM_getValue("linkColor") || reset) {
+    const split = splitToRGB(DEFAULT_LINK_COLOR);
+    GM_setValue("linkColor", RGBToHex(split[0], split[1], split[2]));
+  }
+  if (!GM_getValue("visitedLinkColor") || reset) {
+    const linkColorSplit = splitToRGB(DEFAULT_LINK_COLOR);
+    let visitedLinkColorHSL = RGBtoHSL(linkColorSplit[0], linkColorSplit[1], linkColorSplit[2]);
+    visitedLinkColorHSL[2] -= 35;
+    const visitedLinkColorRGB = HSLtoRGB(visitedLinkColorHSL[0], visitedLinkColorHSL[1], visitedLinkColorHSL[2]);
+    GM_setValue("visitedLinkColor", RGBToHex(visitedLinkColorRGB[0], visitedLinkColorRGB[1], visitedLinkColorRGB[2]));
+  }
 }
 
 //############################################___Settings_Button___#####################################################
 
 function addSettingsButton() {
-    // Create a list that contains settings button
-    let settingsButtonList = document.createElement("li");
-    let settingsButton = document.createElement("a");
-    settingsButton.id = "settingsButton";
-    settingsButton.style.fontWeight = 'bold';
-    settingsButton.onclick = function () {
-        let settingsModal = document.getElementById("settingsModal")
-        settingsModal.style.display = "block";
-        return false;
-    };
-    settingsButtonList.appendChild(settingsButton);
-    // Getting the login button and logout button
-    const loginLinkElement = document.getElementById("pt-login");
-    const logoutLinkElement = document.getElementById("pt-logout");
-    // Two cases: user logged-in or not logged-in
-    // Get the parent of either element that is defined
-    let parentList = (loginLinkElement) ? (loginLinkElement.parentElement) : (logoutLinkElement.parentElement);
-    // Adding toggle script button to after the login/logout button
-    parentList.appendChild(settingsButtonList);
-    setSettingsButton();
+  // Create a list that contains settings button
+  let settingsButtonList = document.createElement("li");
+  let settingsButton = document.createElement("a");
+  settingsButton.id = "settingsButton";
+  settingsButton.style.fontWeight = 'bold';
+  settingsButton.onclick = function () {
+    let settingsModal = document.getElementById("settingsModal")
+    settingsModal.style.display = "block";
+    return false;
+  };
+  settingsButtonList.appendChild(settingsButton);
+  // Getting the login button and logout button
+  const loginLinkElement = document.getElementById("pt-login");
+  const logoutLinkElement = document.getElementById("pt-logout");
+  // Two cases: user logged-in or not logged-in
+  // Get the parent of either element that is defined
+  let parentList = (loginLinkElement) ? (loginLinkElement.parentElement) : (logoutLinkElement.parentElement);
+  // Adding toggle script button to after the login/logout button
+  parentList.appendChild(settingsButtonList);
+  setSettingsButton();
 }
 
 function setSettingsButton() {
-    let settingsButton = document.getElementById("settingsButton");
-    let text, title;
-    switch (LOCALE) {
-        case "zh":
-            text = "设置";
-            title = "设置维基百科黑色主题。";
-            break;
-        case "ja":
-            text = "設定";
-            title = "ウィキペディアダークテーマを設定します。";
-            break;
-        case "fr":
-            text = "Les paramètres";
-            title = "Modifiez les paramètres de Wikipédia Dark Theme.";
-            break;
-        default:
-            text = "Settings";
-            title = "Change settings for Wikipedia Dark Theme.";
-    }
-    settingsButton.text = text;
-    settingsButton.title = title;
-    settingsButton.style.color = GM_getValue("scriptEnabled") ? "white" : "black";
+  let settingsButton = document.getElementById("settingsButton");
+  let text, title;
+  switch (LOCALE) {
+    case "zh":
+      text = "设置";
+      title = "设置维基百科黑色主题。";
+      break;
+    case "ja":
+      text = "設定";
+      title = "ウィキペディアダークテーマを設定します。";
+      break;
+    case "fr":
+      text = "Les paramètres";
+      title = "Modifiez les paramètres de Wikipédia Dark Theme.";
+      break;
+    default:
+      text = "Settings";
+      title = "Change settings for Wikipedia Dark Theme.";
+  }
+  settingsButton.text = text;
+  settingsButton.title = title;
+  settingsButton.style.color = GM_getValue("scriptEnabled") ? "white" : "black";
 }
 
 //############################################___Settings_Modal___######################################################
 
 function createSettingsModal() {
-    let settingsModal = `
+  let settingsModal = `
         <div id="settingsModal" class="modal">
             <div class="modal-content">
                 <div class="modal-header">
@@ -509,13 +622,14 @@ function createSettingsModal() {
                     </div>
                     <h6>Color preferences (in dark theme)</h6>
                     <div class="form-check-inline">
-                        <label for="linkColor" id="linkColorLabel">Link color: </label>
+                        <label for="linkColor" class="label">Link color: </label>
                         <input type="color" id="linkColor" title="Choose your link color">
                     </div>
                     <div class="form-check-inline">
-                        <label for="contrastValue">Contrast value:</label>
-                        <input type="number" id="contrastValue" min="3" max="9" title="Enter a contrast value (between 3 and 9)">
+                        <label for="visitedLinkColor" class="label">Link color (visited): </label>
+                        <input type="color" id="visitedLinkColor" title="Choose your visited link color">
                     </div>
+                    <br>
                 </div>
                 <div class="modal-footer">
                    <button class="btn btn-outline-secondary" id="restoreButton">Restore defaults</button>
@@ -525,92 +639,87 @@ function createSettingsModal() {
             </div>
         '</div>'
     `;
-    document.body.insertAdjacentHTML('afterend', settingsModal)
+  document.body.insertAdjacentHTML('afterend', settingsModal)
 }
 
 function setSettings() {
-    if (document.getElementById("syncTheme").checked) {
-        GM_setValue("syncTheme", true);
-    } else {
-        GM_setValue("syncTheme", false);
-    }
-    if (document.getElementById("darkTheme").checked) {
-        GM_setValue("scriptEnabled", true);
-    } else {
-        GM_setValue("scriptEnabled", false);
-    }
-    GM_setValue("linkColor", document.getElementById("linkColor").value);
-    const contrastValue = document.getElementById("contrastValue").value;
-    if (1 <= contrastValue <= 10) {
-        GM_setValue("contrastValue", contrastValue);
-    } else {
-        GM_setValue("contrastValue", DEFAULT_CONTRAST_VALUE);
-    }
+  if (document.getElementById("syncTheme").checked) {
+    GM_setValue("syncTheme", true);
+  } else {
+    GM_setValue("syncTheme", false);
+  }
+  if (document.getElementById("darkTheme").checked) {
+    GM_setValue("scriptEnabled", true);
+  } else {
+    GM_setValue("scriptEnabled", false);
+  }
+  GM_setValue("linkColor", document.getElementById("linkColor").value);
+  GM_setValue("visitedLinkColor", document.getElementById("visitedLinkColor").value);
 }
 
 function updateSettingsModal() {
-    updateThemePreferences();
-    updateColorPreferences();
+  updateThemePreferences();
+  updateColorPreferences();
 }
 
 function updateThemePreferences() {
-    if (GM_getValue("syncTheme")) {
-        const userPrefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
-        if (userPrefersDark) {
-            GM_setValue("scriptEnabled", true);
-        } else {
-            GM_setValue("scriptEnabled", false);
-        }
-        document.getElementById("syncTheme").checked = "checked";
+  if (GM_getValue("syncTheme")) {
+    const userPrefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+    if (userPrefersDark) {
+      GM_setValue("scriptEnabled", true);
     } else {
-        if (GM_getValue("scriptEnabled")) {
-            document.getElementById("darkTheme").checked = "checked";
-        } else {
-            document.getElementById("lightTheme").checked = "checked";
-        }
+      GM_setValue("scriptEnabled", false);
     }
+    document.getElementById("syncTheme").checked = "checked";
+  } else {
+    if (GM_getValue("scriptEnabled")) {
+      document.getElementById("darkTheme").checked = "checked";
+    } else {
+      document.getElementById("lightTheme").checked = "checked";
+    }
+  }
 }
 
 function updateColorPreferences() {
-    document.getElementById("linkColor").value = GM_getValue("linkColor");
-    document.getElementById("contrastValue").value = GM_getValue("contrastValue");
+  document.getElementById("linkColor").value = GM_getValue("linkColor");
+  document.getElementById("visitedLinkColor").value = GM_getValue("visitedLinkColor");
 }
 
 function dismissSettingsModal() {
-    const settingsModal = document.getElementById("settingsModal");
-    settingsModal.style.display = "none";
-    updateSettingsModal();
+  const settingsModal = document.getElementById("settingsModal");
+  settingsModal.style.display = "none";
+  updateSettingsModal();
 }
 
 function addButtonListeners() {
-    const closeButtons = document.getElementsByClassName("close");
-    for (let i = 0; i < closeButtons.length; i++) {
-        closeButtons[i].onclick = function () {
-            dismissSettingsModal();
-        }
+  const closeButtons = document.getElementsByClassName("close");
+  for (let i = 0; i < closeButtons.length; i++) {
+    closeButtons[i].onclick = function () {
+      dismissSettingsModal();
     }
-    window.onclick = function (event) {
-        if (event.target === document.getElementById("settingsModal")) {
-            dismissSettingsModal();
-        }
+  }
+  window.onclick = function (event) {
+    if (event.target === document.getElementById("settingsModal")) {
+      dismissSettingsModal();
     }
-    const saveButton = document.getElementById("saveButton");
-    saveButton.onclick = function () {
-        setSettings();
-        dismissSettingsModal();
-        location.reload();
-    }
-    const restoreButton = document.getElementById("restoreButton");
-    restoreButton.onclick = function () {
-        initGMStorage(true);
-        dismissSettingsModal();
-        location.reload();
-    }
+  }
+  const saveButton = document.getElementById("saveButton");
+  saveButton.onclick = function () {
+    setSettings();
+    dismissSettingsModal();
+    location.reload();
+  }
+  const restoreButton = document.getElementById("restoreButton");
+  restoreButton.onclick = function () {
+    initGMStorage(true);
+    dismissSettingsModal();
+    location.reload();
+  }
 }
 
-function insertSettingsModalStyles() {
-    const style = document.createElement('style');
-    style.innerHTML = `
+function insertSettingsModalStyle() {
+  const settingsModalStyle = document.createElement('style');
+  settingsModalStyle.innerHTML = `
          .modal {
             font-family: var(--bs-font-sans-serif);
             font-size: 1rem;
@@ -701,8 +810,9 @@ function insertSettingsModalStyles() {
         #restoreButton {
             margin-right: auto;
         }
-        #linkColorLabel {
+        .label {
             margin: .4rem;
+            display: inline-block;
         }
         .h1, .h2, .h3, .h4, .h5, .h6, h1, h2, h3, h4, h5, h6 {
             margin-top: 0;
@@ -797,26 +907,6 @@ function insertSettingsModalStyles() {
             -webkit-print-color-adjust: exact;
             color-adjust: exact;
         }
-        #contrastValue {
-            display: inline-block;
-            width: 50px;
-            padding: .375rem .75rem;
-            font-size: 1rem;
-            font-weight: 400;
-            line-height: 1.5;
-            color: #212529;
-            background-color: #fff;
-            background-clip: padding-box;
-            border: 1px solid #ced4da;
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            appearance: none;
-            border-radius: .25rem;
-            transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
-        }
-        .label {
-            display: inline-block;
-        }
     `
-    document.head.appendChild(style);
+  document.head.appendChild(settingsModalStyle);
 }

@@ -38,7 +38,7 @@ Within, you can choose how Wikipedia pages look to you.
 
 Select a single light or dark theme, or sync with your system and automatically switch between light and dark themes.
 
-Moreover, you can choose your own link color and contrast value.
+Moreover, you can choose your own link color.
 
 Try to adjust these values and find the Wikipedia theme that looks best for you.
 
