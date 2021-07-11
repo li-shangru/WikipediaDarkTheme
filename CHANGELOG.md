@@ -1,5 +1,15 @@
 # Wikipedia Dark Theme Changelog
 
+## [1.50](https://github.com/li-shangru/WikipediaDarkTheme/commit/b48f388b9a0bff9a3aa52ace93a7c0adeffcf1cc) (2021-07-11)
+
+* Re-implemented color inverse function, from using RGB to match contrast value, to HSL matching relative luminance
+* Visited links can now have different color than normal links
+* Added custom color option for visited links
+* Remove option to change contrast value
+* Improvements on ancestries and table styles
+* Source code reformat and structure improvement
+* Fav icon fix
+
 ## [1.41](https://github.com/li-shangru/WikipediaDarkTheme/commit/8b60de0bc8cd7e3a5bcc5cee9bfadf35f9843bb3) (2021-07-04)
 
 * Fixed a bug where when user dismissed settings modal, settings not reverted
