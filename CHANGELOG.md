@@ -1,6 +1,6 @@
 # Wikipedia Dark Theme Changelog
 
-## [1.51](https://github.com/li-shangru/WikipediaDarkTheme/commit/) (2021-07-??)
+## [1.51](https://github.com/li-shangru/WikipediaDarkTheme/commit/5f69dd7ebd34f9618879c684ab62c9f131cfe695) (2021-07-14)
 
 * Fix list style
 * Minor color change improvement
