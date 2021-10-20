@@ -14,7 +14,7 @@ Ease on the eyes, pleasant in the heart.
 
 _Note: using this script WILL affect page loading speed; currently only optimized for English Wiki pages._
 
-For a list of changes, please refer to [CHANGELOG.md](https://github.com/MaxsLi/WikipediaDarkTheme/blob/master/CHANGELOG.md)
+For a list of changes, please refer to [CHANGELOG.md](https://github.com/li-shangru/WikipediaDarkTheme/blob/master/CHANGELOG.md)
 
 **Also available on : [Greasy Fork](https://greasyfork.org/en/scripts/382833-wikipedia-dark-theme)**
 
@@ -24,7 +24,7 @@ Requires **[Tampermonkey](https://www.tampermonkey.net/)** or other user script 
 
 To install:
 
-* Click this [`Wikipedia Dark Theme.user.js`](https://github.com/MaxsLi/WikipediaDarkTheme/raw/master/Wikipedia%20Dark%20Theme.user.js) file.
+* Click this [`Wikipedia Dark Theme.user.js`](https://github.com/li-shangru/WikipediaDarkTheme/raw/master/Wikipedia%20Dark%20Theme.user.js) file.
 
 * An install page should pop up automatically.
 
