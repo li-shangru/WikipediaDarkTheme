@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Wikipedia Dark Theme
 // @author       Shangru Li
-// @version      1.51
+// @version      1.52
 // @match        *://*.wikipedia.org/*
 // @match        *://*.mediawiki.org/*
 // @match        *://*.wikimedia.org/*
@@ -33,9 +33,9 @@
 'use strict';
 
 //############################################___Default_Values___######################################################
-const DEFAULT_RELATIVE_LUMINANCE = 0.9;
+const DEFAULT_RELATIVE_LUMINANCE = 0.8;
 const DEFAULT_FOREGROUND_COLOR = "rgb(238, 255, 255)";
-const DEFAULT_BACKGROUND_COLOR = "rgb(35, 35, 35)";
+const DEFAULT_BACKGROUND_COLOR = "rgb(30, 30, 30)";
 const DEFAULT_LINK_COLOR = "rgb(249, 186, 82)";
 //############################################___One_Could_Alter_If_Desired___##########################################
 
@@ -291,7 +291,9 @@ function changeForegroundColor(e) {
 function changeBackgroundColor(e) {
   const elementComputedStyle = window.getComputedStyle(e, null);
   let backgroundColor = elementComputedStyle.getPropertyValue("background-color");
-  if (colorIsRGB(backgroundColor)) {
+  if (elementToChangeBackground(e)) {
+    e.style.backgroundColor = DEFAULT_BACKGROUND_COLOR;
+  } else if (colorIsRGB(backgroundColor)) {
     const backgroundColorSplit = splitToRGB(backgroundColor);
     const backgroundColorInverse = inverseRBGColor(backgroundColorSplit);
     const backgroundColorInverseHSV = RGBtoHSL(backgroundColorInverse[0], backgroundColorInverse[1], backgroundColorInverse[2]);
@@ -305,7 +307,7 @@ function changeBackgroundColor(e) {
     const backgroundColorHSL = decreaseLuminance(backgroundColorInverseHSV, defaultBackgroundColorHSL, DEFAULT_RELATIVE_LUMINANCE, 1);
     const backgroundColorRGB = HSLtoRGB(backgroundColorHSL[0], backgroundColorHSL[1], backgroundColorHSL[2]);
     e.style.backgroundColor = RGBArrayToString(backgroundColorRGB);
-  } else if (backgroundColor !== "rgba(0, 0, 0, 0)" || elementToChangeBackground(e)) {
+  } else if (backgroundColor !== "rgba(0, 0, 0, 0)") {
     e.style.backgroundColor = DEFAULT_BACKGROUND_COLOR;
   }
   const backgroundImage = elementComputedStyle.getPropertyValue("background-image");
@@ -320,7 +322,9 @@ function backgroundImageToRemove(backgroundImage) {
 }
 
 function elementToChangeBackground(e) {
-  return e.id.toLowerCase().includes("mw-head") || e.parentElement.id.includes("ca-");
+  console.log(e.id)
+  return e.id.toLowerCase().includes("mw-head") || e.id === "content" ||
+    e.id === "mw-panel" || e.parentElement.id.includes("ca-");
 }
 
 //############################################___Color_Utility___#######################################################
