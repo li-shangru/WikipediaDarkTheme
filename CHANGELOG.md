@@ -1,5 +1,10 @@
 # Wikipedia Dark Theme Changelog
 
+## [1.52](https://github.com/li-shangru/WikipediaDarkTheme/commit/8b257369dece32954804e7b07947b6a151b3b6a0) (2021-10-30)
+
+* Background color improvement
+* Changed default background color and relative luminance
+
 ## [1.51](https://github.com/li-shangru/WikipediaDarkTheme/commit/5f69dd7ebd34f9618879c684ab62c9f131cfe695) (2021-07-14)
 
 * Fix list style
