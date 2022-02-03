@@ -1,7 +1,8 @@
 // ==UserScript==
 // @name         Wikipedia Dark Theme
+// @description  Script gives Wikipedia pages a dark color theme
 // @author       Shangru Li
-// @version      1.52
+// @version      1.60
 // @match        *://*.wikipedia.org/*
 // @match        *://*.mediawiki.org/*
 // @match        *://*.wikimedia.org/*
@@ -19,9 +20,7 @@
 // @grant        GM_getValue
 // @run-at       document-start
 // @license      MIT
-//######################___Localizations___#####################################
-// @name                Wikipedia Dark Theme
-// @description         Script gives Wikipedia pages a dark color theme
+// ######################___Localizations___#####################################
 // @name:ja             Wikipediaダークテーマ
 // @description:ja      Wikipediaのサイトのバックグラウンドを黒に変更するスクリプトです
 // @name:zh-CN          维基百科黑色主题
@@ -227,7 +226,8 @@ function elementIsHyperlink(e) {
 }
 
 function elementIsWikiLogo(e) {
-  return e.className.toLowerCase().includes("mw-wiki-logo");
+  return e.className.toLowerCase().includes("mw-wiki-logo") ||
+    e.parentElement.className.toLowerCase().includes("mw-wiki-logo");
 }
 
 function elementIsKeyboardKey(e) {
@@ -322,7 +322,6 @@ function backgroundImageToRemove(backgroundImage) {
 }
 
 function elementToChangeBackground(e) {
-  console.log(e.id)
   return e.id.toLowerCase().includes("mw-head") || e.id === "content" ||
     e.id === "mw-panel" || e.parentElement.id.includes("ca-");
 }
@@ -374,7 +373,8 @@ function RGBtoHSL(r, g, b) {
   r /= 255;
   g /= 255;
   b /= 255;
-  let max = Math.max(r, g, b), min = Math.min(r, g, b);
+  let max = Math.max(r, g, b),
+    min = Math.min(r, g, b);
   let h, s, l = (max + min) / 2;
   if (max === min) {
     h = s = 0;
@@ -432,6 +432,7 @@ function overrideSpecialElementStyles() {
   document.head.appendChild(getAncestriesStyle());
   document.head.appendChild(getListStyle());
   document.head.appendChild(getLanguageSpecificStyle());
+  document.head.appendChild(getThemeSpecificStyle());
 }
 
 function getVisitedLinkStyle() {
@@ -477,6 +478,44 @@ function getListStyle() {
         }
   `
   return listStyle;
+}
+
+function getThemeSpecificStyle() {
+  const themeStyle = document.createElement('style');
+  if (document.body.className.includes('skin-minerva')) {
+    // Skin `MinervaNeue` badges
+    themeStyle.innerHTML = `
+      .mw-echo-notifications-badge { filter: invert(100%); }
+    `
+  } else if (document.body.className.includes('skin-monobook')) {
+    // Skin `MonoBook` top white bar
+    themeStyle.innerHTML = `
+      body { background: none; }
+      .mw-echo-notifications-badge { filter: invert(100%); }
+    `
+  } else if (document.body.className.includes('skin-timeless')) {
+    // Skin `Timeless` side bar small screen
+    themeStyle.innerHTML = `
+      #searchButton { filter: invert(100%); }
+      .mw-echo-notifications-badge { filter: invert(100%); }
+    `
+  } else if (document.body.className.includes('skin-vector-2022')) {
+    // Skin `Vector 2022` side bar small screen
+    themeStyle.innerHTML = `
+      #mw-panel { background-image: none !important; background-color: transparent !important;}
+      .mw-echo-notifications-badge { filter: invert(100%); }
+      .mw-ui-icon { filter: invert(100%); }
+      #mw-head { background-color: transparent !important; }
+      .mw-logo-icon { background-color: transparent !important; }
+      #content { background-color: transparent !important; }
+    `
+  } else if (document.body.className.includes('skin-vector')) {
+    // Skin `Vector` badges
+    themeStyle.innerHTML = `
+      .mw-echo-notifications-badge { filter: invert(100%); }
+    `
+  }
+  return themeStyle;
 }
 
 function getLanguageSpecificStyle() {
@@ -578,10 +617,11 @@ function addSettingsButton() {
   settingsButtonList.appendChild(settingsButton);
   // Getting the login button and logout button
   const loginLinkElement = document.getElementById("pt-login");
-  const logoutLinkElement = document.getElementById("pt-logout");
+  const logoutLinkElement = document.getElementById("pt-logout") ? document.getElementById("pt-logout").parentElement : document.getElementById("p-personal");
   // Two cases: user logged-in or not logged-in
+  // if user logged-in, there's different themes
   // Get the parent of either element that is defined
-  let parentList = (loginLinkElement) ? (loginLinkElement.parentElement) : (logoutLinkElement.parentElement);
+  let parentList = (loginLinkElement) ? (loginLinkElement.parentElement) : (logoutLinkElement);
   // Adding toggle script button to after the login/logout button
   parentList.appendChild(settingsButtonList);
   setSettingsButton();
