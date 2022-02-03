@@ -1,5 +1,15 @@
 # Wikipedia Dark Theme Changelog
 
+## [1.60](https://github.com/li-shangru/WikipediaDarkTheme/commit/3b4f643ce72a787874821225b54678eb5f8eacaf) (2022-02-02)
+
+* Optimized the color display the following skins:
+  * Vector
+  * MinervaNeue
+  * MonoBook
+  * Timeless
+  * Vector 2022
+* Fixed a bug where settings option does not appear on the Vector 2022 skin
+
 ## [1.52](https://github.com/li-shangru/WikipediaDarkTheme/commit/8b257369dece32954804e7b07947b6a151b3b6a0) (2021-10-30)
 
 * Background color improvement
