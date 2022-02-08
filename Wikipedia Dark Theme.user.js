@@ -2,7 +2,7 @@
 // @name         Wikipedia Dark Theme
 // @description  Script gives Wikipedia pages a dark color theme
 // @author       Shangru Li
-// @version      1.60
+// @version      1.61
 // @match        *://*.wikipedia.org/*
 // @match        *://*.mediawiki.org/*
 // @match        *://*.wikimedia.org/*
@@ -606,15 +606,16 @@ function initGMStorage(reset = false) {
 function addSettingsButton() {
   // Create a list that contains settings button
   let settingsButtonList = document.createElement("li");
-  let settingsButton = document.createElement("a");
-  settingsButton.id = "settingsButton";
-  settingsButton.style.fontWeight = 'bold';
-  settingsButton.onclick = function () {
-    let settingsModal = document.getElementById("settingsModal")
-    settingsModal.style.display = "block";
-    return false;
-  };
-  settingsButtonList.appendChild(settingsButton);
+  settingsButtonList.innerHTML += `
+    <a
+      id="settingsButton"
+      title="Change settings for Wikipedia Dark Theme."
+      style="font-weight: bold; color: white;"
+      onclick="document.getElementById('settingsModal').style.display = 'block'; return false;"
+    >
+      Settings
+    </a>
+  `;
   // Getting the login button and logout button
   const loginLinkElement = document.getElementById("pt-login");
   const logoutLinkElement = document.getElementById("pt-logout") ? document.getElementById("pt-logout").parentElement : document.getElementById("p-personal");
