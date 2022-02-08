@@ -1,5 +1,9 @@
 # Wikipedia Dark Theme Changelog
 
+## [1.61](https://github.com/li-shangru/WikipediaDarkTheme/commit/2c2d15b5af1022c355054fc3edb15811238b0a01) (2022-02-08)
+
+* Find an issue where settings button does not open settings modal in Vector 2022 skin
+
 ## [1.60](https://github.com/li-shangru/WikipediaDarkTheme/commit/3b4f643ce72a787874821225b54678eb5f8eacaf) (2022-02-02)
 
 * Optimized the color display the following skins:
@@ -77,7 +81,7 @@
 ## [1.24](https://github.com/li-shangru/WikipediaDarkTheme/commit/bbd3373e21125b3b229da5e8785c274408349f45) (2021-02-17)
 
 * Added French translation for toggle script button
-* Optimized the main pages of the following languages:s
+* Optimized the main pages of the following languages:
   * العربية
   * Deutsch
   * Español
