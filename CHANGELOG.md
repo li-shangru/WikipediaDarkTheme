@@ -1,5 +1,10 @@
 # Wikipedia Dark Theme Changelog
 
+## [1.62](https://github.com/li-shangru/WikipediaDarkTheme/commit/9663fdf65a82d7f92a0aeadc37fdbaa103d6da09) (2022-08-23)
+
+* Fixed issue https://github.com/li-shangru/WikipediaDarkTheme/issues/9
+* Improved error handling
+
 ## [1.61](https://github.com/li-shangru/WikipediaDarkTheme/commit/2c2d15b5af1022c355054fc3edb15811238b0a01) (2022-02-08)
 
 * Find an issue where settings button does not open settings modal in Vector 2022 skin
