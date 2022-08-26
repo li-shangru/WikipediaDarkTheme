@@ -2,7 +2,7 @@
 // @name         Wikipedia Dark Theme
 // @description  Script gives Wikipedia pages a dark color theme
 // @author       Shangru Li
-// @version      1.62
+// @version      1.63
 // @match        *://*.wikipedia.org/*
 // @match        *://*.mediawiki.org/*
 // @match        *://*.wikimedia.org/*
@@ -98,7 +98,7 @@ const INVERT_SRC_TAG = [
   "font_awesome_5_solid_tree", "font_awesome_5_solid_globe", "font_awesome_5_solid_futbol",
   "font_awesome_5_solid_hourglass", "font_awesome_5_solid_users", "font_awesome_5_solid_palette",
   "font_awesome_5_solid_rocket", "font_awesome_5_solid_bong", "vlad1Trezub", "font_awesome_5_solid_flag",
-  "font_awesome_5_solid_university", "wikipedia_wordmark", "wikipedia-logo-textonly"
+  "font_awesome_5_solid_university", "wikipedia_wordmark", "wikipedia-logo-textonly", "mediawiki-wordmark-en.svg"
 ];
 
 //############################################___Controller___##########################################################
@@ -107,18 +107,21 @@ const INVERT_SRC_TAG = [
 // Document state will go from `loading` --> `interactive` --> `complete`
 // Metadata Block `@run-at document-start` will ensure this script start executing when `loading`
 (document.onreadystatechange = function () {
-  if (GM_getValue("scriptEnabled")) {
-    if ('loading' === document.readyState) {
-      setPageVisibility("hidden");
-    } else if ('interactive' === document.readyState) {
-      applyDarkTheme();
+  try {
+    if (GM_getValue("scriptEnabled")) {
+      if ('loading' === document.readyState) {
+        setPageVisibility("hidden");
+      } else if ('interactive' === document.readyState) {
+        applyDarkTheme();
+      } else if ('complete' === document.readyState) {
+        setPageVisibility("visible");
+        setupThemeByHost();
+      }
     } else if ('complete' === document.readyState) {
-      setPageVisibility("visible");
-      initSettingElements();
-      overrideSpecialElementStyles();
+      setupThemeByHost();
     }
-  } else if ('complete' === document.readyState) {
-    initSettingElements();
+  } catch (error) {
+    console.error(error);
   }
 })();
 
@@ -424,9 +427,43 @@ function HSLtoRGB(h, s, l) {
   return [r * 255, g * 255, b * 255];
 }
 
-//############################################___Special_Styles___######################################################
+//############################################___Host_Specific___#######################################################
 
-function overrideSpecialElementStyles() {
+function setupThemeByHost() {
+  const hostname = window.location.hostname;
+  let settingsButtonParentList;
+  if (hostname === "etherpad.wikimedia.org") {
+    // Etherpad
+    settingsButtonParentList = document.querySelector("[data-key='showusers']").parentElement;
+    if (GM_getValue("scriptEnabled")) {
+      overrideSpecialElementStylesForEtherpad();
+    }
+  } else {
+    // Default to Wikipedia pages
+    settingsButtonParentList = getWikiPagesSettingsButtonParentList();
+    if (GM_getValue("scriptEnabled")) {
+      overrideSpecialElementStylesForWikiPages();
+    }
+  }
+  initSettingElements(settingsButtonParentList);
+}
+
+function getWikiPagesSettingsButtonParentList() {
+  let settingsButtonParentList;
+  if (document.getElementById("pt-login")) {
+    settingsButtonParentList = document.getElementById("pt-login").parentElement;
+  } else if (document.getElementById("pt-logout")) {
+    settingsButtonParentList = document.getElementById("pt-logout").parentElement;
+  } else if (document.getElementById("p-personal")) {
+    settingsButtonParentList = document.getElementById("p-personal").parentElement ? document.getElementById("p-personal").parentElement : document.getElementById("p-personal");
+  }
+  // TODO: fall back place
+  return settingsButtonParentList;
+}
+
+//############################################___Special_Styles_for_Wikipedia_Pages___##################################
+
+function overrideSpecialElementStylesForWikiPages() {
   document.head.appendChild(getVisitedLinkStyle());
   document.head.appendChild(getTableStyle());
   document.head.appendChild(getAncestriesStyle());
@@ -575,20 +612,51 @@ function getLanguageSpecificStyle() {
   return langStyle;
 }
 
+//############################################___Special_Styles_for_Etherpad___#########################################
+
+function overrideSpecialElementStylesForEtherpad() {
+  isEtherpadLoaded().then(() => {
+    setEtherpadTheme('#272822', '#FFF', '#FFF', '#FFF', '#FFF', '#272822', '#272822');
+  });
+}
+
+async function isEtherpadLoaded() {
+  while (document.querySelector("iframe[name='ace_outer']") === null || document.querySelector("iframe[name='ace_outer']").contentDocument.querySelector("iframe[name='ace_inner']") === null) {
+    await new Promise(resolve => requestAnimationFrame(resolve))
+  }
+}
+
+function setEtherpadTheme(light, superDark, dark, primary, middle, text, superLight) {
+  document.body.style.setProperty('--light-color', light);
+  document.body.style.setProperty('--super-dark-color', superDark);
+  document.body.style.setProperty('--dark-color', dark);
+  document.body.style.setProperty('--primary-color', primary);
+  document.body.style.setProperty('--middle-color', middle);
+  document.body.style.setProperty('--text-color', text);
+  document.body.style.setProperty('--super-light-color', superLight);
+
+  const outerStyle = document.querySelector("iframe[name='ace_outer']").contentDocument.body.style;
+
+  outerStyle.setProperty('--primary-color', primary);
+  outerStyle.setProperty('--super-light-color', superLight);
+  outerStyle.setProperty('--super-dark-color', superDark);
+  outerStyle.setProperty('--light-color', light);
+  outerStyle.setProperty('--dark-color', dark);
+
+  const innerStyle = document.querySelector("iframe[name='ace_outer']").contentDocument.querySelector("iframe[name='ace_inner']").contentDocument.body.style;
+  innerStyle.setProperty('--super-dark-color', superDark);
+  innerStyle.setProperty('--primary-color', primary);
+}
 
 //############################################___Init_Elements___#######################################################
 
-function initSettingElements() {
-  try {
-    initGMStorage();
-    insertSettingsModalStyle();
-    createSettingsModal();
-    addButtonListeners();
-    addSettingsButton();
-    updateSettingsModal();
-  } catch(error) {
-    console.error(error);
-  }
+function initSettingElements(settingsButtonParentList) {
+  initGMStorage();
+  insertSettingsModalStyle();
+  createSettingsModal();
+  addButtonListeners();
+  addSettingsButton(settingsButtonParentList);
+  updateSettingsModal();
 }
 
 function initGMStorage(reset = false) {
@@ -607,7 +675,7 @@ function initGMStorage(reset = false) {
 
 //############################################___Settings_Button___#####################################################
 
-function addSettingsButton() {
+function addSettingsButton(parentList) {
   // Create a list that contains settings button
   let settingsButtonList = document.createElement("li");
   settingsButtonList.innerHTML += `
@@ -620,13 +688,6 @@ function addSettingsButton() {
       Settings
     </a>
   `;
-  // Getting the login button and logout button
-  const loginLinkElement = window.location.href.includes("etherpad.wikimedia.org") ? document.querySelector("[data-key='showusers']") : document.getElementById("pt-login");
-  const logoutLinkElement = document.getElementById("pt-logout") ? document.getElementById("pt-logout").parentElement : document.getElementById("p-personal");
-  // Two cases: user logged-in or not logged-in
-  // if user logged-in, there's different themes
-  // Get the parent of either element that is defined
-  let parentList = (loginLinkElement) ? (loginLinkElement.parentElement) : (logoutLinkElement);
   // Adding toggle script button to after the login/logout button
   parentList.appendChild(settingsButtonList);
   setSettingsButton();
