@@ -432,7 +432,7 @@ function HSLtoRGB(h, s, l) {
 function setupThemeByHost() {
   const hostname = window.location.hostname;
   let settingsButtonParentList;
-  if (hostname.indexOf("etherpad.wikimedia.org") > -1) {
+  if (hostname === "etherpad.wikimedia.org") {
     // Etherpad
     settingsButtonParentList = document.querySelector("[data-key='showusers']").parentElement;
     if (GM_getValue("scriptEnabled")) {
