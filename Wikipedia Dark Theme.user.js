@@ -698,7 +698,7 @@ function createSettingsModal() {
                    <button class="btn btn-outline-primary" id="saveButton">Save changes</button>
                 </div>
             </div>
-        '</div>'
+        </div>
     `;
   document.body.insertAdjacentHTML('afterend', settingsModal)
 }
