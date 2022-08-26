@@ -621,7 +621,7 @@ function addSettingsButton() {
     </a>
   `;
   // Getting the login button and logout button
-  const loginLinkElement = window.location.href.indexOf ("etherpad.wikimedia.org") > -1 ? document.querySelector("[data-key='showusers']") : document.getElementById("pt-login");
+  const loginLinkElement = window.location.href.indexOf ("https://etherpad.wikimedia.org") == 0 ? document.querySelector("[data-key='showusers']") : document.getElementById("pt-login");
   const logoutLinkElement = document.getElementById("pt-logout") ? document.getElementById("pt-logout").parentElement : document.getElementById("p-personal");
   // Two cases: user logged-in or not logged-in
   // if user logged-in, there's different themes
