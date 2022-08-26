@@ -1,5 +1,12 @@
 # Wikipedia Dark Theme Changelog
 
+## [1.63](https://github.com/li-shangru/WikipediaDarkTheme/pull/15) (2022-08-26)
+
+* Fixed issue https://github.com/li-shangru/WikipediaDarkTheme/issues/11
+* Fixed issue https://github.com/li-shangru/WikipediaDarkTheme/issues/12
+* Added a Monokai theme for Etherpad
+* Thank you @csavard-sudo for contributing!
+
 ## [1.62](https://github.com/li-shangru/WikipediaDarkTheme/commit/9663fdf65a82d7f92a0aeadc37fdbaa103d6da09) (2022-08-23)
 
 * Fixed issue https://github.com/li-shangru/WikipediaDarkTheme/issues/9
@@ -227,7 +234,7 @@
 
 * Optimize images display
 * Added a check that specific images will be inverted for better display result
-* Wikipedia Dark Theme were published on [Greasy Fork](https://greasyfork.org/en/scripts/382833-wikipedia-dark-theme)
+* Wikipedia Dark Theme was published on [Greasy Fork](https://greasyfork.org/en/scripts/382833-wikipedia-dark-theme)
 
 ## [0.82](https://github.com/li-shangru/WikipediaDarkTheme/commit/7be7d0adf09609b97bbf71ec5c461bd84644f06d) (2019-04-19)
 
