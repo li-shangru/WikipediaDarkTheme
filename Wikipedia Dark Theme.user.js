@@ -2,7 +2,7 @@
 // @name         Wikipedia Dark Theme
 // @description  Script gives Wikipedia pages a dark color theme
 // @author       Shangru Li
-// @version      1.62
+// @version      1.63
 // @match        *://*.wikipedia.org/*
 // @match        *://*.mediawiki.org/*
 // @match        *://*.wikimedia.org/*
@@ -621,7 +621,7 @@ function addSettingsButton() {
     </a>
   `;
   // Getting the login button and logout button
-  const loginLinkElement = window.location.href.includes("etherpad.wikimedia.org") ? document.querySelector("[data-key='showusers']") : document.getElementById("pt-login");
+  const loginLinkElement = window.location.href.indexOf ("etherpad.wikimedia.org") > -1 ? document.querySelector("[data-key='showusers']") : document.getElementById("pt-login");
   const logoutLinkElement = document.getElementById("pt-logout") ? document.getElementById("pt-logout").parentElement : document.getElementById("p-personal");
   // Two cases: user logged-in or not logged-in
   // if user logged-in, there's different themes
